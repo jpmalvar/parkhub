@@ -5,6 +5,14 @@ Sistema web completo de gestão de estacionamento, evolução do programa de ter
 tarifas por hora para carro e moto, histórico e faturamento) e acrescenta interface moderna, segurança
 de verdade, pagamentos, relatórios e atualização em tempo real.
 
+## 🌐 Acesse online
+
+**<https://parkhub-1s5q.onrender.com/>**
+
+Use o **acesso rápido de demonstração** na tela de login para entrar direto como Cliente ou Administrador.
+O site está hospedado no plano gratuito do Render: se ficar um tempo sem acessos, o primeiro carregamento
+pode levar até 1 minuto.
+
 ## Como executar
 
 **Windows, jeito mais fácil:** dê dois cliques em `iniciar.bat`.
