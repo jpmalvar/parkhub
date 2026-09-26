@@ -1,0 +1,13 @@
+# Python
+backend/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Dados locais (banco SQLite e chave secreta gerada)
+backend/data/
+
+# Node
+frontend/node_modules/
+
+# O build (frontend/dist) é mantido para rodar o sistema sem precisar do Node.js
