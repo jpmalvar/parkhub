@@ -7,7 +7,7 @@ de verdade, pagamentos, relatórios e atualização em tempo real.
 
 ## Online
 
-**<URL_VERCEL>**
+**<https://parkhub-xi.vercel.app>**
 
 Na tela de login tem acesso rápido pra entrar como Cliente ou como Administrador.
 Está hospedado na Vercel: o frontend é servido como site estático e a API roda como função Python,
