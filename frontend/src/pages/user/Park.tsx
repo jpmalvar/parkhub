@@ -194,10 +194,10 @@ export default function Park() {
       <AnimatePresence mode="wait" custom={dir}>
         {step === 0 && (
           <motion.div key="s0" custom={dir} variants={slide} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.3 }}>
-            <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
               <Card className="p-6">
                 <h2 className="font-semibold">Qual veículo você vai estacionar?</h2>
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {vehicles.isLoading && <Skeleton className="h-20" />}
                   {vehicles.data?.items.map((v) => {
                     const parked = parkedPlates.has(v.plate)
@@ -353,17 +353,18 @@ export default function Park() {
               )}
             </Card>
             <div className="sticky bottom-4 z-10 mt-5">
-              <div className="flex items-center gap-4 rounded-xl border border-border bg-surface p-3 pl-5 shadow-lg">
-                <Button variant="ghost" size="sm" icon={<ArrowLeft className="size-4" />} onClick={() => go(0)}>
-                  Voltar
+              <div className="flex items-center gap-2 rounded-xl border border-border bg-surface p-2.5 shadow-lg sm:gap-4 sm:p-3 sm:pl-5">
+                <Button variant="ghost" size="sm" icon={<ArrowLeft className="size-4" />} onClick={() => go(0)} aria-label="Voltar">
+                  <span className="hidden sm:inline">Voltar</span>
                 </Button>
-                <div className="flex-1 text-sm">
+                <div className="min-w-0 flex-1 text-sm">
                   {spot ? (
-                    <span className="flex items-center gap-2">
-                      <MapPin className="size-4 text-brand" /> Vaga <strong>{spot.code}</strong> · {spot.floor}º andar
+                    <span className="flex items-center gap-1.5 whitespace-nowrap sm:gap-2">
+                      <MapPin className="size-4 shrink-0 text-brand" /> Vaga <strong>{spot.code}</strong>
+                      <span className="hidden sm:inline">· {spot.floor}º andar</span>
                     </span>
                   ) : (
-                    <span className="text-muted">Nenhuma vaga selecionada</span>
+                    <span className="text-muted">Toque numa vaga livre</span>
                   )}
                 </div>
                 <Button disabled={!spot} onClick={() => go(2)}>
@@ -387,7 +388,7 @@ export default function Park() {
                   </div>
                 </div>
               </div>
-              <div className="grid gap-px bg-border sm:grid-cols-3">
+              <div className="grid grid-cols-1 gap-px bg-border sm:grid-cols-3">
                 {[
                   { label: 'Veículo', value: kindLabel(kind) },
                   { label: 'Andar', value: `${spot.floor}º andar` },
@@ -419,11 +420,11 @@ export default function Park() {
                   </ul>
                 </div>
               )}
-              <div className="flex gap-3 border-t border-border p-5">
+              <div className="flex flex-col-reverse gap-2 border-t border-border p-4 sm:flex-row sm:gap-3 sm:p-5">
                 <Button variant="ghost" icon={<ArrowLeft className="size-4" />} onClick={() => go(1)}>
                   Trocar vaga
                 </Button>
-                <Button className="flex-1" size="lg" loading={create.isPending} onClick={() => create.mutate()} icon={<TicketIcon className="size-4" />}>
+                <Button className="w-full sm:w-auto sm:flex-1" size="lg" loading={create.isPending} onClick={() => create.mutate()} icon={<TicketIcon className="size-4" />}>
                   Confirmar e gerar ticket
                 </Button>
               </div>

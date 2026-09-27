@@ -26,7 +26,7 @@ const SAMPLE: Ticket = {
 
 export function AuthLayout({ title, subtitle, children, footer }: { title: string; subtitle: string; children: ReactNode; footer: ReactNode }) {
   return (
-    <div className="grid min-h-screen lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
+    <div className="grid grid-cols-1 min-h-screen lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
       <div className="relative flex flex-col px-6 py-6 sm:px-10">
         <div className="flex items-center justify-between">
           <Link to="/">

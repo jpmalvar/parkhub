@@ -89,7 +89,7 @@ export default function AdminDashboard() {
         <StatCard label="Permanência média" value={k.avg_stay_minutes} format={(n) => duration(n)} icon={<Clock />} tone="warning" hint={`${k.customers} clientes · ${k.new_customers} novos`} />
       </motion.div>
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-3">
+      <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <Card className="xl:col-span-2">
           <CardHeader title="Faturamento diário" subtitle={`Receita de saídas pagas nos últimos ${days} dias`} icon={<Wallet className="size-4" />} />
           <div className="h-72 px-2 pb-3 pt-4">
@@ -156,7 +156,7 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
         <Card className="xl:col-span-1 lg:col-span-2">
           <CardHeader title="Horários de pico" subtitle={`Maior movimento às ${peak.hour}h`} icon={<Activity className="size-4" />} />
           <div className="h-60 px-2 pb-3 pt-4">
@@ -248,7 +248,7 @@ export default function AdminDashboard() {
             </ButtonLink>
           }
         />
-        <div className="grid gap-1 p-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-2">
           {data.recent.map((a, i) => (
             <motion.div
               key={a.id}

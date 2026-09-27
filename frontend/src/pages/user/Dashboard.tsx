@@ -49,12 +49,12 @@ export default function UserDashboard() {
       {/* tickets ativos */}
       <section className="mb-8">
         {tickets.isLoading ? (
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
             <Skeleton className="h-64" />
             <Skeleton className="h-64" />
           </div>
         ) : active.length ? (
-          <motion.div variants={stagger.container} initial="hidden" animate="show" className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <motion.div variants={stagger.container} initial="hidden" animate="show" className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
             {active.map((t) => (
               <ActiveTicketCard key={t.code} ticket={t} tariff={tickets.data!.tariffs[t.vehicle_kind]} />
             ))}
@@ -97,7 +97,7 @@ export default function UserDashboard() {
         </div>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <Card>
           <CardHeader title="Gastos por mês" subtitle="Últimos 6 meses" icon={<Wallet className="size-4" />} />
           <div className="h-64 px-2 pb-4 pt-4">

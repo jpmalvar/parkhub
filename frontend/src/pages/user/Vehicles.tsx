@@ -88,7 +88,7 @@ export default function Vehicles() {
         }
       />
       {isLoading ? (
-        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {[0, 1, 2].map((i) => (
             <Skeleton key={i} className="h-52" />
           ))}
@@ -98,7 +98,7 @@ export default function Vehicles() {
           <EmptyState icon={<Car />} title="Nenhum veículo salvo" description="Adicione seus veículos para agilizar a entrada no estacionamento." action={<Button onClick={() => setAdding(true)}>Adicionar veículo</Button>} />
         </Card>
       ) : (
-        <motion.div layout className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+        <motion.div layout className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
           <AnimatePresence>
             {data.items.map((v, i) => (
               <motion.div

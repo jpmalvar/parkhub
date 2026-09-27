@@ -9,18 +9,21 @@ const CAR_COLORS = ['#e8e8e6', '#a9adb3', '#2b2d31', '#e8e8e6', '#7b8088', '#b33
 // Carro do próprio usuário em amarelo, pra achar rápido no mapa.
 const MINE = '#f2bf2f'
 
+// O aspectRatio explícito é necessário no Safari (iPhone): com só a altura definida em %,
+// ele deixa o SVG com largura 0 e o carro some.
 export function CarTop({ color = '#a9adb3', className }: { color?: string; className?: string }) {
+  const gradient = `body-${color.replace('#', '')}`
   return (
-    <svg viewBox="0 0 40 72" className={className} aria-hidden>
+    <svg viewBox="0 0 40 72" className={clsx('shrink-0', className)} style={{ aspectRatio: '40 / 72' }} aria-hidden>
       <defs>
-        <linearGradient id={`body-${color}`} x1="0" x2="1">
+        <linearGradient id={gradient} x1="0" x2="1">
           <stop offset="0" stopColor={color} stopOpacity="0.85" />
           <stop offset="0.5" stopColor={color} />
           <stop offset="1" stopColor={color} stopOpacity="0.8" />
         </linearGradient>
       </defs>
       <ellipse cx="20" cy="38" rx="19" ry="33" fill="black" opacity="0.25" />
-      <rect x="4" y="3" width="32" height="66" rx="11" fill={`url(#body-${color})`} />
+      <rect x="4" y="3" width="32" height="66" rx="11" fill={`url(#${gradient})`} />
       <rect x="1" y="21" width="4" height="6" rx="2" fill={color} />
       <rect x="35" y="21" width="4" height="6" rx="2" fill={color} />
       <path d="M8 22 Q20 16 32 22 L30 32 Q20 29 10 32 Z" fill="#0b1220" opacity="0.85" />
@@ -36,7 +39,7 @@ export function CarTop({ color = '#a9adb3', className }: { color?: string; class
 
 function MotoTop({ color = '#f59e0b', className }: { color?: string; className?: string }) {
   return (
-    <svg viewBox="0 0 20 60" className={className} aria-hidden>
+    <svg viewBox="0 0 20 60" className={clsx('shrink-0', className)} style={{ aspectRatio: '20 / 60' }} aria-hidden>
       <ellipse cx="10" cy="31" rx="8" ry="27" fill="black" opacity="0.25" />
       <rect x="7" y="2" width="6" height="12" rx="3" fill="#1f2937" />
       <rect x="7" y="46" width="6" height="12" rx="3" fill="#1f2937" />
@@ -95,7 +98,7 @@ export function GarageMap({ floor, mode = 'view', selectedId, highlightId, allow
         {/* número da vaga pintado no chão */}
         <span
           className={clsx(
-            'absolute left-1/2 -translate-x-1/2 font-mono text-[10px] font-bold tracking-wider',
+            'absolute left-1/2 -translate-x-1/2 font-mono text-[9px] font-bold tracking-wider sm:text-[10px]',
             row === 'top' ? 'top-1.5' : 'bottom-1.5',
             selected ? 'text-brand' : 'text-muted/70',
           )}
@@ -153,7 +156,7 @@ export function GarageMap({ floor, mode = 'view', selectedId, highlightId, allow
         </div>
 
         {spot.mine && (
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-md bg-brand px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white shadow-lg">
+          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded bg-brand px-1 py-0.5 text-[8px] font-bold uppercase text-white shadow-lg sm:rounded-md sm:px-1.5 sm:text-[9px] sm:tracking-wide">
             Seu
           </span>
         )}
@@ -173,23 +176,23 @@ export function GarageMap({ floor, mode = 'view', selectedId, highlightId, allow
 
   return (
     <div className="overflow-x-auto pb-1">
-      <div className="relative min-w-[500px] rounded-xl border border-border bg-surface-2/50 p-2.5 sm:p-4">
+      <div className="relative min-w-[300px] rounded-xl border border-border bg-surface-2/50 p-1.5 sm:min-w-[500px] sm:p-4">
         {/* fileira superior */}
         <div className="grid grid-cols-8 divide-x-2 divide-border rounded-t-xl border-t-4 border-border/80">
           {top.map((s, i) => renderSpot(s, 'top', i))}
         </div>
 
         {/* pista de circulação */}
-        <div className="relative my-1 flex h-14 items-center overflow-hidden rounded-xl lane animate-lane">
-          <div className="absolute left-3 flex items-center gap-1.5 rounded-md bg-success/15 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-success">
+        <div className="relative my-1 flex h-10 items-center overflow-hidden rounded-xl lane animate-lane sm:h-14">
+          <div className="absolute left-1.5 flex items-center gap-1 rounded-md bg-success/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-success sm:left-3 sm:gap-1.5 sm:px-2 sm:py-1 sm:text-[10px]">
             Entrada <ArrowRight className="size-3" />
           </div>
-          <div className="mx-auto flex gap-10 text-muted/40">
+          <div className="mx-auto hidden gap-10 text-muted/40 sm:flex">
             {[0, 1, 2].map((i) => (
               <ChevronsRight key={i} className="size-5" />
             ))}
           </div>
-          <div className="absolute right-3 flex items-center gap-1.5 rounded-md bg-danger/15 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-danger">
+          <div className="absolute right-1.5 flex items-center gap-1 rounded-md bg-danger/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-danger sm:right-3 sm:gap-1.5 sm:px-2 sm:py-1 sm:text-[10px]">
             Saída <ArrowRight className="size-3" />
           </div>
         </div>
@@ -199,7 +202,7 @@ export function GarageMap({ floor, mode = 'view', selectedId, highlightId, allow
           {bottom.map((s, i) => renderSpot(s, 'bottom', i + 8))}
           <div className="flex aspect-[0.62] flex-col items-center justify-center gap-1 rounded-t-xl bg-[repeating-linear-gradient(-45deg,transparent_0_8px,color-mix(in_oklab,var(--muted)_10%,transparent)_8px_16px)] text-center text-muted/70">
             <CornerRightUp className="size-4" />
-            <span className="text-[9px] font-bold uppercase tracking-wider">Rampa</span>
+            <span className="hidden text-[9px] font-bold uppercase tracking-wider sm:block">Rampa</span>
           </div>
         </div>
       </div>
@@ -248,7 +251,7 @@ export function FloorTabs({
             type="button"
             onClick={() => onChange(f.floor)}
             className={clsx(
-              'relative flex min-w-[120px] flex-1 items-center justify-between gap-3 rounded-xl border px-4 py-2.5 text-left transition',
+              'relative flex min-w-[96px] flex-1 items-center justify-between gap-2 rounded-xl border px-3 py-2 text-left transition sm:min-w-[120px] sm:gap-3 sm:px-4 sm:py-2.5',
               active ? 'border-brand/50 text-fg' : 'border-border text-muted hover:border-brand/30 hover:text-fg',
             )}
           >

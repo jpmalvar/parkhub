@@ -1,0 +1,1 @@
+import{d as e}from"./index-By4I5Na9.js";const c={name:"clock",size:24,node:[["circle",{cx:"12",cy:"12",r:"10",key:"1mglay"}],["path",{d:"M12 6v6l4 2",key:"mmk7yg"}]]};c.node;const a=e(c);export{a as C};

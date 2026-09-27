@@ -55,7 +55,7 @@ export default function LiveMap() {
       {!data ? (
         <Skeleton className="h-[520px]" />
       ) : (
-        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
           <Card className="p-5">
             <FloorTabs floors={data.floors} value={floor} onChange={(f) => { setFloor(f); clear() }} />
             <div className="mt-4">{current && <GarageMap floor={current} mode="admin" selectedId={selected?.id ?? null} highlightId={selected ? null : selectedId} onSelect={select} />}</div>

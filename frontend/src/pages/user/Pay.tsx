@@ -376,7 +376,7 @@ export default function Pay() {
           </ButtonLink>
         }
       />
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
         <div className="space-y-4">
           <Summary detail={detail.data} />
           <div className="flex items-center gap-2.5 rounded-xl border border-border px-4 py-3 text-xs text-muted">

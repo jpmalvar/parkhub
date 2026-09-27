@@ -89,12 +89,12 @@ export default function Tariffs() {
           </Button>
         }
       />
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
         <div className="space-y-6">
           {(['carro', 'moto'] as const).map((kind) => (
             <Card key={kind}>
               <CardHeader title={kind === 'carro' ? 'Carros' : 'Motos'} subtitle="Valores cobrados por veículo" icon={kind === 'carro' ? <Car className="size-4" /> : <Bike className="size-4" />} />
-              <div className="grid gap-4 p-5 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
                 <Field label="Valor por hora (R$)" htmlFor={`${kind}-h`}>
                   <Input id={`${kind}-h`} inputMode="decimal" value={form[kind === 'carro' ? 'hourly_car_cents' : 'hourly_moto_cents']} onChange={set(kind === 'carro' ? 'hourly_car_cents' : 'hourly_moto_cents')} />
                 </Field>

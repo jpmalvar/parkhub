@@ -25,7 +25,7 @@ function Navbar() {
 
   return (
     <header className={clsx('sticky top-0 z-40 border-b bg-bg transition-colors', scrolled ? 'border-border' : 'border-transparent')}>
-      <div className="mx-auto flex h-16 max-w-6xl items-center gap-8 px-4 sm:px-6">
+      <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-4 sm:gap-8 sm:px-6">
         <Link to="/">
           <Logo />
         </Link>
@@ -42,9 +42,12 @@ function Navbar() {
             </ButtonLink>
           ) : (
             <>
-              <ButtonLink to="/entrar" variant="ghost" size="sm" className="hidden sm:inline-flex">
-                Entrar
-              </ButtonLink>
+              {/* o wrapper esconde no celular; "hidden" direto no botão brigava com o inline-flex dele */}
+              <span className="hidden sm:block">
+                <ButtonLink to="/entrar" variant="ghost" size="sm">
+                  Entrar
+                </ButtonLink>
+              </span>
               <ButtonLink to="/cadastro" size="sm">
                 Criar conta
               </ButtonLink>
@@ -118,7 +121,7 @@ function Hero() {
   const { data } = useOverview()
   return (
     <section className="border-b border-border">
-      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:py-24">
+      <div className="mx-auto grid grid-cols-1 max-w-6xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:py-24">
         <div>
           <p className="text-sm font-medium text-muted">
             {data ? (
@@ -163,7 +166,7 @@ function Occupancy() {
         {data?.floors.map((f) => {
           const pct = f.total ? Math.round((f.occupied / f.total) * 100) : 0
           return (
-            <div key={f.floor} className="grid items-center gap-3 px-5 py-4 sm:grid-cols-[110px_1fr_auto]">
+            <div key={f.floor} className="grid grid-cols-1 items-center gap-3 px-5 py-4 sm:grid-cols-[110px_1fr_auto]">
               <div className="font-display text-lg font-semibold">{f.floor}º andar</div>
               <div className="h-2 overflow-hidden rounded-full bg-surface-3">
                 <div className={clsx('h-full rounded-full transition-[width] duration-700', pct > 85 ? 'bg-danger' : 'bg-brand')} style={{ width: `${pct}%` }} />
@@ -218,7 +221,7 @@ function HowItWorks() {
     <section id="como-funciona" className="scroll-mt-16 border-y border-border bg-surface">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         <h2 className="text-2xl font-bold sm:text-3xl">Como funciona</h2>
-        <div className="mt-10 grid gap-12 md:grid-cols-2">
+        <div className="mt-10 grid grid-cols-1 gap-12 md:grid-cols-2">
           {list('Pra quem estaciona', customer)}
           {list('Pra quem administra', admin)}
         </div>
@@ -236,7 +239,7 @@ function Pricing() {
   ]
   return (
     <section id="precos" className="mx-auto max-w-6xl scroll-mt-16 px-4 py-16 sm:px-6">
-      <div className="grid gap-10 md:grid-cols-[1fr_1.2fr]">
+      <div className="grid grid-cols-1 gap-10 md:grid-cols-[1fr_1.2fr]">
         <div>
           <h2 className="text-2xl font-bold sm:text-3xl">Preços</h2>
           <p className="mt-3 leading-relaxed text-muted">
@@ -276,7 +279,7 @@ const OLD_MAP = ['O', 'L', 'O', 'O', 'L', 'O', 'L', 'O', 'L', 'O', 'O', 'L', 'L'
 function Origin() {
   return (
     <section id="historia" className="scroll-mt-16 border-t border-border bg-surface">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+      <div className="mx-auto grid grid-cols-1 max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
         <div className="min-w-0">
           <h2 className="text-2xl font-bold sm:text-3xl">De onde veio</h2>
           <div className="mt-4 space-y-4 leading-relaxed text-muted">

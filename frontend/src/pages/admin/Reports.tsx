@@ -84,7 +84,7 @@ export default function Reports() {
       )}
 
       <Card>
-        <div className="grid gap-3 border-b border-border p-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1.4fr)_repeat(4,1fr)_auto]">
+        <div className="grid grid-cols-1 gap-3 border-b border-border p-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1.4fr)_repeat(4,1fr)_auto]">
           <Input icon={<Search />} placeholder="Placa, ticket ou cliente…" value={q} onChange={(e) => setQ(e.target.value)} className="h-10" />
           <Select value={status} onChange={(e) => setStatus(e.target.value)} className="h-10">
             <option value="all">Todos os status</option>

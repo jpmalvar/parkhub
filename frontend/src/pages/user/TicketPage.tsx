@@ -19,7 +19,7 @@ function LivePanel({ ticket, tariff }: { ticket: Ticket; tariff: Tariff }) {
   const next = secondsToNextCharge(seconds, tariff)
   return (
     <Card className="relative overflow-hidden p-6">
-      <div className="relative grid gap-6 sm:grid-cols-2">
+      <div className="relative grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted">
             <Timer className="size-4" /> Tempo estacionado
@@ -87,7 +87,7 @@ export default function TicketPage() {
           </ButtonLink>
         }
       />
-      <div className="grid gap-8 lg:grid-cols-[380px_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[380px_minmax(0,1fr)]">
         <div>
           <TicketStub ticket={ticket} />
         </div>
@@ -112,7 +112,7 @@ export default function TicketPage() {
                 </div>
                 <div className="ml-auto text-3xl font-extrabold">{brl(ticket.amount_cents)}</div>
               </div>
-              <dl className="mt-6 grid gap-4 text-sm sm:grid-cols-3">
+              <dl className="mt-6 grid grid-cols-1 gap-4 text-sm sm:grid-cols-3">
                 <div className="rounded-xl bg-surface-2/70 p-3.5">
                   <dt className="text-xs text-muted">Permanência</dt>
                   <dd className="font-semibold">{duration(ticket.duration_minutes ?? 0)}</dd>
