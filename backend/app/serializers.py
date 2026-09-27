@@ -13,6 +13,9 @@ def user_dict(user: User) -> dict:
         "is_active": user.is_active,
         "created_at": iso(user.created_at),
         "last_login_at": iso(user.last_login_at),
+        "avatar_url": (
+            f"/api/me/avatar/{user.id}?v={int(user.avatar_updated_at.timestamp())}" if user.avatar_updated_at else None
+        ),
     }
 
 

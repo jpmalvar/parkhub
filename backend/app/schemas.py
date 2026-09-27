@@ -20,6 +20,13 @@ def _check_password_strength(value: str) -> str:
     return value
 
 
+def _clean_full_name(value: str) -> str:
+    value = " ".join(value.split())
+    if not 3 <= len(value) <= 80:
+        raise ValueError("Informe seu nome completo (3 a 80 caracteres).")
+    return value
+
+
 class RegisterIn(BaseModel):
     username: str
     full_name: str
@@ -37,10 +44,7 @@ class RegisterIn(BaseModel):
     @field_validator("full_name")
     @classmethod
     def _full_name(cls, v: str) -> str:
-        v = " ".join(v.split())
-        if not 3 <= len(v) <= 80:
-            raise ValueError("Informe seu nome completo (3 a 80 caracteres).")
-        return v
+        return _clean_full_name(v)
 
     @field_validator("password")
     @classmethod
@@ -141,3 +145,17 @@ class SettingsIn(BaseModel):
 class UserUpdateIn(BaseModel):
     role: Literal["user", "admin"] | None = None
     is_active: bool | None = None
+
+
+class ProfileIn(BaseModel):
+    full_name: str
+
+    @field_validator("full_name")
+    @classmethod
+    def _full_name(cls, v: str) -> str:
+        return _clean_full_name(v)
+
+
+class AvatarIn(BaseModel):
+    # data URL gerada pelo navegador, ex.: "data:image/jpeg;base64,/9j/4AAQ..."
+    image: str = Field(max_length=400_000)

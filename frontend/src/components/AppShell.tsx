@@ -23,7 +23,7 @@ import clsx from 'clsx'
 import { post } from '../lib/api'
 import { useMe, useOverview, useSetMe } from '../lib/hooks'
 import { useRealtime, useRealtimeStatus, type RealtimeEvent } from '../lib/realtime'
-import { initials } from '../lib/format'
+import { Avatar } from './Avatar'
 import { Logo } from './Logo'
 import { ThemeToggle } from './ThemeToggle'
 import { CommandPalette } from './CommandPalette'
@@ -184,7 +184,7 @@ export function AppShell({ variant }: { variant: 'user' | 'admin' }) {
         <OccupancyWidget />
         {user && (
           <div className="flex items-center gap-3 rounded-xl border border-border p-3">
-            <div className="flex size-9 items-center justify-center rounded-xl bg-brand text-xs font-bold text-white">{initials(user.full_name)}</div>
+            <Avatar user={user} className="size-9 rounded-lg bg-brand text-xs text-white" />
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm font-semibold">{user.full_name}</div>
               <div className="truncate text-xs text-muted">@{user.username}</div>

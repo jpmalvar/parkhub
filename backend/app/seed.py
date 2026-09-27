@@ -1,5 +1,5 @@
 """Criação da estrutura inicial: tabelas, vagas, tarifas padrão e conta administrativa."""
-from sqlalchemy import select, text
+from sqlalchemy import inspect, select, text
 from sqlalchemy.orm import Session
 
 from .config import (
@@ -38,8 +38,29 @@ def ensure_base_data(db: Session) -> None:
     db.commit()
 
 
+# Colunas adicionadas depois que o banco de produção já existia. O create_all não altera
+# tabelas existentes, então elas são criadas aqui (sem apagar nenhum dado).
+NEW_COLUMNS = {
+    "users": {"avatar": "BYTEA", "avatar_updated_at": "TIMESTAMP"},
+}
+SQLITE_TYPES = {"BYTEA": "BLOB", "TIMESTAMP": "DATETIME"}
+
+
+def _add_missing_columns() -> None:
+    inspector = inspect(engine)
+    with engine.begin() as conn:
+        for table, columns in NEW_COLUMNS.items():
+            existing = {c["name"] for c in inspector.get_columns(table)}
+            for name, sql_type in columns.items():
+                if name not in existing:
+                    if engine.dialect.name == "sqlite":
+                        sql_type = SQLITE_TYPES[sql_type]
+                    conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {name} {sql_type}"))
+
+
 def init_db() -> None:
     Base.metadata.create_all(engine)
+    _add_missing_columns()
     with SessionLocal() as db:
         ensure_base_data(db)
 

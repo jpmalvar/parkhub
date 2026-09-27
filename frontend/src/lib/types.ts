@@ -10,6 +10,7 @@ export interface User {
   is_active: boolean
   created_at: string
   last_login_at: string | null
+  avatar_url: string | null
 }
 
 export interface SpotRef {

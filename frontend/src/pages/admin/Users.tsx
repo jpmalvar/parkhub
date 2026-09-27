@@ -6,7 +6,9 @@ import { Crown, Search, ShieldCheck, UserCheck, UserRound, Users as UsersIcon, U
 import { api, errorMessage, patch } from '../../lib/api'
 import { useDebounced, useMe } from '../../lib/hooks'
 import type { AdminUser } from '../../lib/types'
-import { brl, dateOnly, initials, relative } from '../../lib/format'
+import { brl, dateOnly, relative } from '../../lib/format'
+import { Avatar } from '../../components/Avatar'
+import clsx from 'clsx'
 import { StatCard } from '../../components/StatCard'
 import { Badge, Button, Card, ConfirmModal, EmptyState, Input, Page, PageHeader, Skeleton, stagger } from '../../components/ui'
 
@@ -76,9 +78,7 @@ export default function UsersPage() {
                     <motion.tr key={u.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }} className="border-t border-border/70 transition hover:bg-surface-2/50">
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-3">
-                          <div className={u.role === 'admin' ? 'flex size-9 items-center justify-center rounded-xl bg-brand text-xs font-bold text-white' : 'flex size-9 items-center justify-center rounded-xl bg-surface-3 text-xs font-bold'}>
-                            {initials(u.full_name)}
-                          </div>
+                          <Avatar user={u} className={clsx('size-9 rounded-lg text-xs', u.role === 'admin' ? 'bg-brand text-white' : 'bg-surface-3')} />
                           <div>
                             <div className="font-medium">
                               {u.full_name} {self && <span className="text-xs text-muted">(você)</span>}

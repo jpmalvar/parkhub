@@ -233,3 +233,56 @@ def test_pulse_changes_on_entry_and_exit(customer):
     assert after_exit["spots"] != after_entry["spots"]
     assert after_exit["last"]["action"] == "exit"
     assert after_exit["settings"] == before["settings"]
+
+
+# ------------------------------------------------------------------ perfil
+PNG_1PX = (
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+)
+
+
+def test_update_full_name(customer):
+    r = customer.patch("/api/me/profile", {"full_name": "  Maria   Souza "})
+    assert r.status_code == 200
+    assert r.json()["user"]["full_name"] == "Maria Souza"
+    assert customer.get("/api/auth/me").json()["user"]["full_name"] == "Maria Souza"
+    assert customer.patch("/api/me/profile", {"full_name": "M"}).status_code == 422
+
+
+def test_avatar_upload_get_and_delete(customer):
+    assert customer.get("/api/auth/me").json()["user"]["avatar_url"] is None
+    r = customer.put("/api/me/avatar", {"image": PNG_1PX})
+    assert r.status_code == 200, r.text
+    url = r.json()["user"]["avatar_url"]
+    assert url.startswith("/api/me/avatar/")
+    img = customer.get(url)
+    assert img.status_code == 200 and img.headers["content-type"] == "image/png"
+
+    assert customer.delete("/api/me/avatar").json()["user"]["avatar_url"] is None
+    assert customer.get(url).status_code == 404
+
+
+def test_avatar_rejects_non_images(customer):
+    fake = "data:image/png;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg=="  # <script>alert(1)</script>
+    assert customer.put("/api/me/avatar", {"image": fake}).status_code == 422
+    assert customer.put("/api/me/avatar", {"image": "não é base64"}).status_code == 422
+
+
+def test_avatar_requires_login():
+    assert Api().get("/api/me/avatar/1").status_code == 401
+
+
+def test_new_columns_added_to_existing_database():
+    from sqlalchemy import inspect, text
+
+    from app.database import engine
+    from app.seed import init_db
+
+    # Simula o banco de produção antigo: tabela users sem as colunas da foto, mas com dados.
+    with engine.begin() as conn:
+        conn.execute(text("ALTER TABLE users DROP COLUMN avatar"))
+        conn.execute(text("ALTER TABLE users DROP COLUMN avatar_updated_at"))
+    init_db()
+    columns = {c["name"] for c in inspect(engine).get_columns("users")}
+    assert {"avatar", "avatar_updated_at"} <= columns
+    assert login("admin", "admin123").get("/api/auth/me").status_code == 200

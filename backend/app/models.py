@@ -6,12 +6,13 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Integer,
+    LargeBinary,
     String,
     Text,
     UniqueConstraint,
     text,
 )
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, deferred, mapped_column, relationship
 
 from .database import Base
 from .utils import utcnow
@@ -30,6 +31,10 @@ class User(Base):
     token_version: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    # Foto de perfil (imagem pequena, já reduzida no navegador). "deferred" pra não carregar
+    # os bytes toda vez que um usuário é lido do banco.
+    avatar: Mapped[bytes | None] = deferred(mapped_column(LargeBinary, nullable=True))
+    avatar_updated_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
     vehicles: Mapped[list["Vehicle"]] = relationship(back_populates="owner", cascade="all, delete-orphan")
 
