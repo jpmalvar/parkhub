@@ -9,7 +9,7 @@ import string
 import sys
 from datetime import datetime, time, timedelta
 
-from sqlalchemy import select
+from sqlalchemy import select, text
 
 from .database import Base, SessionLocal, engine
 from .models import AuditLog, Spot, Ticket, User, Vehicle
@@ -248,10 +248,11 @@ def populate(reset: bool = False) -> None:
         all_tickets = sorted(history + active, key=lambda pair: pair[0].entry_at)
         spot_by_id = {s.id: s for s in spots}
         logs: list[AuditLog] = []
-        for ticket, user in all_tickets:
+        # IDs definidos aqui mesmo (a tabela está vazia) para não precisar de um flush por ticket.
+        for number, (ticket, user) in enumerate(all_tickets, start=1):
+            ticket.id = number
+            ticket.code = str(1000 + number)
             db.add(ticket)
-            db.flush()
-            ticket.code = str(1000 + ticket.id)
             spot = spot_by_id[ticket.spot_id]
             ip = f"192.168.0.{rng.randint(10, 250)}"
             logs.append(
@@ -282,6 +283,10 @@ def populate(reset: bool = False) -> None:
         for _ in range(4):
             logs.append(AuditLog(created_at=now - timedelta(days=rng.randint(1, 20), minutes=rng.randint(0, 600)), username="admin", action="login_falhou", detail="Tentativa para 'admin'", ip="203.0.113.77"))
         db.add_all(logs)
+        db.flush()
+        if engine.dialect.name == "postgresql":
+            # Como os IDs foram passados manualmente, a sequence do Postgres precisa ser acertada.
+            db.execute(text("SELECT setval(pg_get_serial_sequence('tickets', 'id'), (SELECT MAX(id) FROM tickets))"))
         db.commit()
 
         print(

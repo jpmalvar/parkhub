@@ -10,18 +10,17 @@ type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline' | 'succe
 type Size = 'sm' | 'md' | 'lg'
 
 const variants: Record<Variant, string> = {
-  primary:
-    'bg-brand-gradient text-white shadow-[0_8px_24px_-8px_var(--brand)] hover:shadow-[0_10px_30px_-6px_var(--brand)] hover:brightness-110',
+  primary: 'bg-brand text-white hover:bg-brand-2',
   secondary: 'bg-surface-2 text-fg border border-border hover:bg-surface-3',
   ghost: 'text-muted hover:text-fg hover:bg-surface-2',
   outline: 'border border-border text-fg hover:border-brand/60 hover:bg-brand/5',
-  danger: 'bg-danger text-white hover:brightness-110 shadow-[0_8px_24px_-10px_var(--danger)]',
-  success: 'bg-success text-white hover:brightness-110 shadow-[0_8px_24px_-10px_var(--success)]',
+  danger: 'bg-danger text-white hover:brightness-110',
+  success: 'bg-success text-white hover:brightness-110',
 }
 const sizes: Record<Size, string> = {
   sm: 'h-8 px-3 text-xs gap-1.5 rounded-lg',
-  md: 'h-10 px-4 text-sm gap-2 rounded-xl',
-  lg: 'h-12 px-6 text-[15px] gap-2.5 rounded-xl',
+  md: 'h-10 px-4 text-sm gap-2 rounded-lg',
+  lg: 'h-12 px-6 text-[15px] gap-2.5 rounded-lg',
 }
 
 export function buttonClass(variant: Variant = 'primary', size: Size = 'md', extra?: string) {
@@ -248,9 +247,8 @@ export function EmptyState({ icon, title, description, action }: { icon: ReactNo
         initial={{ scale: 0.6, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 260, damping: 18 }}
-        className="relative mb-5 flex size-16 items-center justify-center rounded-2xl bg-brand/10 text-brand [&>svg]:size-7"
+        className="relative mb-5 flex size-16 items-center justify-center rounded-xl bg-brand/10 text-brand [&>svg]:size-7"
       >
-        <div className="absolute inset-0 rounded-2xl bg-brand/10 blur-xl" />
         {icon}
       </motion.div>
       <h3 className="text-base font-semibold">{title}</h3>
@@ -293,7 +291,7 @@ export function Modal({
       {open && (
         <div className="fixed inset-0 z-[100] flex items-end justify-center p-0 sm:items-center sm:p-4">
           <motion.div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -307,7 +305,7 @@ export function Modal({
             exit={{ opacity: 0, y: 30, scale: 0.97 }}
             transition={{ type: 'spring', stiffness: 380, damping: 32 }}
             className={clsx(
-              'relative max-h-[92vh] w-full overflow-y-auto rounded-t-3xl border border-border bg-surface p-6 shadow-2xl sm:rounded-3xl',
+              'relative max-h-[92vh] w-full overflow-y-auto rounded-t-3xl border border-border bg-surface p-6 shadow-2xl sm:rounded-xl',
               { sm: 'sm:max-w-sm', md: 'sm:max-w-lg', lg: 'sm:max-w-2xl' }[size],
             )}
           >
@@ -363,7 +361,7 @@ export function PageHeader({ title, subtitle, actions, eyebrow }: { title: React
   return (
     <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        {eyebrow && <div className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-brand">{eyebrow}</div>}
+        {eyebrow && <div className="mb-1 text-sm text-muted first-letter:uppercase">{eyebrow}</div>}
         <h1 className="text-2xl font-bold tracking-tight sm:text-[28px]">{title}</h1>
         {subtitle && <p className="mt-1.5 text-sm text-muted">{subtitle}</p>}
       </div>

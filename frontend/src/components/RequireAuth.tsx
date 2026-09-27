@@ -8,7 +8,7 @@ export function FullScreenLoader() {
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="relative">
-        <div className="absolute inset-0 animate-ping rounded-2xl bg-brand/30" />
+        <div className="absolute inset-0 animate-ping rounded-xl bg-brand/30" />
         <LogoMark className="relative size-12" />
       </div>
     </div>

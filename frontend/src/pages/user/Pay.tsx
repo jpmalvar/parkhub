@@ -23,7 +23,7 @@ type PayResult = { ticket: Ticket; change_cents?: number }
 
 function Processing({ label }: { label: string }) {
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-2xl bg-surface/90 backdrop-blur">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-xl bg-surface/95">
       <div className="relative">
         <div className="absolute inset-0 animate-ping rounded-full bg-brand/30" />
         <div className="relative flex size-14 items-center justify-center rounded-full bg-brand/15">
@@ -60,7 +60,7 @@ function PixPanel({ code, onPaid, busy }: { code: string; onPaid: (txid: string)
   return (
     <div className="space-y-5">
       <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-        <div className="relative rounded-2xl bg-white p-3 shadow-lg ring-1 ring-black/5">
+        <div className="relative rounded-xl bg-white p-3 shadow-lg ring-1 ring-black/5">
           {pix.data ? (
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
               <QRCodeSVG value={pix.data.payload} size={176} level="M" fgColor="#0c1120" />
@@ -71,7 +71,7 @@ function PixPanel({ code, onPaid, busy }: { code: string; onPaid: (txid: string)
             </div>
           )}
           <motion.div
-            className="pointer-events-none absolute inset-x-3 h-0.5 bg-gradient-to-r from-transparent via-brand to-transparent shadow-[0_0_12px_var(--brand)]"
+            className="pointer-events-none absolute inset-x-3 h-0.5 bg-gradient-to-r from-transparent via-brand to-transparent"
             animate={{ top: ['12px', '184px', '12px'] }}
             transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
           />
@@ -100,7 +100,7 @@ function PixPanel({ code, onPaid, busy }: { code: string; onPaid: (txid: string)
         </Button>
       </div>
       <Button size="lg" className="w-full" disabled={!pix.data || busy || left === 0} onClick={() => pix.data && onPaid(pix.data.txid)} icon={<Check className="size-4" />}>
-        Já paguei — confirmar
+        Já paguei, confirmar
       </Button>
     </div>
   )
@@ -389,7 +389,7 @@ export default function Pay() {
           <AnimatePresence>{stage && <Processing label={stage} />}</AnimatePresence>
           {liveAmount === 0 ? (
             <div className="flex flex-col items-center py-8 text-center">
-              <div className="flex size-16 items-center justify-center rounded-2xl bg-success/15 text-success">
+              <div className="flex size-16 items-center justify-center rounded-xl bg-success/15 text-success">
                 <Gift className="size-8" />
               </div>
               <h3 className="mt-5 text-lg font-semibold">Saída gratuita!</h3>

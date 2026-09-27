@@ -1,49 +1,61 @@
 @import 'tailwindcss';
-@import '@fontsource-variable/inter';
+@import '@fontsource/barlow/400.css';
+@import '@fontsource/barlow/500.css';
+@import '@fontsource/barlow/600.css';
+@import '@fontsource/barlow/700.css';
+@import '@fontsource/barlow-semi-condensed/600.css';
+@import '@fontsource/barlow-semi-condensed/700.css';
 @import '@fontsource-variable/jetbrains-mono';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ------------------------------------------------------------ tokens de design */
+/*
+ * Cores tiradas da sinalização de estacionamento: o azul da placa "E" e o amarelo
+ * da faixa no chão. O resto é neutro, puxado pro quente, pra não ficar com cara de template.
+ */
 :root {
-  --bg: #f5f6fb;
+  --bg: #f4f3ef;
   --surface: #ffffff;
-  --surface-2: #f0f2f8;
-  --surface-3: #e7eaf3;
-  --border: #e2e5ef;
-  --fg: #0c1120;
-  --muted: #5d667c;
-  --brand: #6d5efc;
-  --brand-2: #8b7dff;
-  --accent: #06b6d4;
-  --success: #10b981;
-  --danger: #f43f5e;
-  --warning: #f59e0b;
-  --asphalt: #dfe3ec;
-  --lane-line: #ffffff;
-  --shadow: 0 1px 2px rgb(16 24 40 / 0.04), 0 8px 24px -8px rgb(16 24 40 / 0.08);
+  --surface-2: #efeee9;
+  --surface-3: #e5e3dc;
+  --border: #dedbd2;
+  --fg: #17181b;
+  --muted: #676a72;
+  --brand: #1d4fb8;
+  --brand-2: #3b6fd8;
+  --accent: #d79b00;
+  --success: #1f9d61;
+  --danger: #d63d3d;
+  --warning: #d98a06;
+  --asphalt: #d9d7d0;
+  --lane-line: #f3c318;
+  --shadow: 0 1px 2px rgb(20 20 20 / 0.05);
   color-scheme: light;
 }
 
 .dark {
-  --bg: #06080f;
-  --surface: #0d111d;
-  --surface-2: #131929;
-  --surface-3: #1a2135;
-  --border: #20283c;
-  --fg: #e9edf7;
-  --muted: #8a93a8;
-  --brand: #7c6dff;
-  --brand-2: #a497ff;
-  --accent: #22d3ee;
-  --asphalt: #0a0e18;
-  --lane-line: #3a4460;
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 12px 32px -12px rgb(0 0 0 / 0.6);
+  --bg: #121315;
+  --surface: #191a1d;
+  --surface-2: #202125;
+  --surface-3: #2a2b30;
+  --border: #2e3035;
+  --fg: #ecebe7;
+  --muted: #9a9ca3;
+  --brand: #4f82e8;
+  --brand-2: #6d97ee;
+  --accent: #f2bf2f;
+  --success: #3fbf7f;
+  --danger: #ee6060;
+  --warning: #f0a53a;
+  --asphalt: #0d0e10;
+  --lane-line: #b8931c;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4);
   color-scheme: dark;
 }
 
 @theme inline {
-  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Barlow', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Barlow Semi Condensed', 'Barlow', ui-sans-serif, sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
   --color-bg: var(--bg);
   --color-surface: var(--surface);
@@ -62,15 +74,10 @@
 }
 
 @theme {
-  --animate-float: float 6s ease-in-out infinite;
   --animate-shimmer: shimmer 2.2s linear infinite;
   --animate-lane: lane 1.2s linear infinite;
   --animate-pulse-ring: pulse-ring 2s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
 
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
   @keyframes shimmer {
     from { background-position: -200% 0; }
     to { background-position: 200% 0; }
@@ -93,8 +100,12 @@
   }
   body {
     @apply bg-bg text-fg font-sans;
-    font-feature-settings: 'cv11', 'ss01';
+    font-size: 15.5px;
     min-height: 100vh;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
   }
   ::selection {
     background: color-mix(in oklab, var(--brand) 35%, transparent);
@@ -114,33 +125,12 @@
 /* ------------------------------------------------------------ componentes utilitários */
 @layer components {
   .card {
-    @apply rounded-2xl border border-border bg-surface/80 shadow-soft backdrop-blur-xl;
-  }
-  .glass {
-    @apply border border-white/10 bg-surface/60 backdrop-blur-2xl;
-  }
-  .text-gradient {
-    background: linear-gradient(100deg, var(--brand-2) 0%, var(--accent) 50%, var(--brand) 100%);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: shimmer 6s linear infinite;
-  }
-  .bg-brand-gradient {
-    background-image: linear-gradient(135deg, var(--brand) 0%, #5b8cff 55%, var(--accent) 120%);
+    @apply rounded-xl border border-border bg-surface shadow-soft;
   }
   .skeleton {
     background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface-3) 50%, var(--surface-2) 75%);
     background-size: 200% 100%;
     @apply animate-shimmer rounded-lg;
-  }
-  .grid-bg {
-    background-image:
-      linear-gradient(to right, color-mix(in oklab, var(--fg) 5%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklab, var(--fg) 5%, transparent) 1px, transparent 1px);
-    background-size: 44px 44px;
-    mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 40%, transparent 100%);
   }
   .lane {
     background-color: var(--asphalt);

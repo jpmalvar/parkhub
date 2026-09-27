@@ -76,7 +76,7 @@ export default function UsersPage() {
                     <motion.tr key={u.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }} className="border-t border-border/70 transition hover:bg-surface-2/50">
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-3">
-                          <div className={u.role === 'admin' ? 'flex size-9 items-center justify-center rounded-xl bg-brand-gradient text-xs font-bold text-white' : 'flex size-9 items-center justify-center rounded-xl bg-surface-3 text-xs font-bold'}>
+                          <div className={u.role === 'admin' ? 'flex size-9 items-center justify-center rounded-xl bg-brand text-xs font-bold text-white' : 'flex size-9 items-center justify-center rounded-xl bg-surface-3 text-xs font-bold'}>
                             {initials(u.full_name)}
                           </div>
                           <div>

@@ -2,9 +2,7 @@
 (function () {
   try {
     var saved = localStorage.getItem('parkhub-theme')
-    var dark = saved ? saved === 'dark' : true
+    var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches
     if (dark) document.documentElement.classList.add('dark')
-  } catch (e) {
-    document.documentElement.classList.add('dark')
-  }
+  } catch (e) {}
 })()

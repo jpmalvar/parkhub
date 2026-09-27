@@ -19,7 +19,6 @@ function LivePanel({ ticket, tariff }: { ticket: Ticket; tariff: Tariff }) {
   const next = secondsToNextCharge(seconds, tariff)
   return (
     <Card className="relative overflow-hidden p-6">
-      <div className="absolute -right-20 -top-20 size-56 rounded-full bg-brand/15 blur-3xl" />
       <div className="relative grid gap-6 sm:grid-cols-2">
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted">
@@ -29,7 +28,7 @@ function LivePanel({ ticket, tariff }: { ticket: Ticket; tariff: Tariff }) {
         </div>
         <div className="sm:text-right">
           <div className="text-xs font-semibold uppercase tracking-wider text-muted">Valor até agora</div>
-          <motion.div key={calc.amount} initial={{ scale: 1.2, opacity: 0.4 }} animate={{ scale: 1, opacity: 1 }} className="mt-2 text-4xl font-extrabold tracking-tight text-gradient sm:text-5xl">
+          <motion.div key={calc.amount} initial={{ scale: 1.2, opacity: 0.4 }} animate={{ scale: 1, opacity: 1 }} className="mt-2 text-4xl font-extrabold tracking-tight text-brand sm:text-5xl">
             {brl(calc.amount)}
           </motion.div>
         </div>
@@ -45,7 +44,7 @@ function LivePanel({ ticket, tariff }: { ticket: Ticket; tariff: Tariff }) {
             ) : (
               <>
                 {calc.hours} hora(s) cobrada(s) × {brl(tariff.hourly_cents)}
-                {calc.capApplied && <> — <strong className="text-success">teto diário aplicado</strong></>}. O valor sobe para{' '}
+                {calc.capApplied && <>, <strong className="text-success">teto diário aplicado</strong></>}. O valor sobe para{' '}
                 <strong className="text-fg">{brl(computeAmount(seconds + next + 1, tariff).amount)}</strong> em {Math.ceil(next / 60)} min.
               </>
             )}
@@ -104,7 +103,7 @@ export default function TicketPage() {
           ) : (
             <Card className="p-6">
               <div className="flex items-center gap-3">
-                <div className="flex size-11 items-center justify-center rounded-2xl bg-success/15 text-success">
+                <div className="flex size-11 items-center justify-center rounded-xl bg-success/15 text-success">
                   <CircleCheckBig className="size-6" />
                 </div>
                 <div>

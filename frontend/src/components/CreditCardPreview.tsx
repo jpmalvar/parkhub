@@ -30,7 +30,7 @@ const GRADIENTS: Record<string, string> = {
   Elo: 'linear-gradient(135deg,#111 0%,#333 50%,#ffcb05 150%)',
   Amex: 'linear-gradient(135deg,#0b5e7a 0%,#2e8fb5 60%,#9bd3e8 100%)',
   Hipercard: 'linear-gradient(135deg,#7a0b14 0%,#b3131b 60%,#ff6b6b 100%)',
-  '': 'linear-gradient(135deg,#2a2150 0%,#5b4bd6 55%,#22d3ee 140%)',
+  '': 'linear-gradient(135deg,#2a2c31 0%,#44474f 100%)',
 }
 
 /** Cartão 3D que gira para mostrar o verso quando o CVV é digitado. */
@@ -47,10 +47,9 @@ export function CreditCardPreview({ number, holder, expiry, cvv, flipped }: { nu
         className="relative size-full [transform-style:preserve-3d]"
       >
         <div
-          className="absolute inset-0 flex flex-col justify-between overflow-hidden rounded-2xl p-5 text-white shadow-2xl [backface-visibility:hidden]"
+          className="absolute inset-0 flex flex-col justify-between overflow-hidden rounded-xl p-5 text-white shadow-2xl [backface-visibility:hidden]"
           style={{ background: GRADIENTS[brand] }}
         >
-          <div className="absolute -right-10 -top-16 size-48 rounded-full bg-white/10 blur-2xl" />
           <div className="relative flex items-center justify-between">
             <div className="h-8 w-11 rounded-md bg-gradient-to-br from-yellow-200 via-yellow-400 to-yellow-600 shadow-inner" />
             <Wifi className="size-5 rotate-90 opacity-80" />
@@ -75,7 +74,7 @@ export function CreditCardPreview({ number, holder, expiry, cvv, flipped }: { nu
           </div>
         </div>
         <div
-          className="absolute inset-0 overflow-hidden rounded-2xl text-white shadow-2xl [backface-visibility:hidden] [transform:rotateY(180deg)]"
+          className="absolute inset-0 overflow-hidden rounded-xl text-white shadow-2xl [backface-visibility:hidden] [transform:rotateY(180deg)]"
           style={{ background: GRADIENTS[brand] }}
         >
           <div className="mt-6 h-10 bg-black/80" />

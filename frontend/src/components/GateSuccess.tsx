@@ -4,7 +4,7 @@ import { CarTop } from './GarageMap'
 /** Animação de sucesso: a cancela sobe e o carro passa. */
 export function GateSuccess() {
   return (
-    <div className="relative mx-auto h-44 w-80 overflow-hidden rounded-2xl border border-border bg-surface-2/60">
+    <div className="relative mx-auto h-44 w-80 overflow-hidden rounded-xl border border-border bg-surface-2/60">
       <div className="lane animate-lane absolute inset-x-0 bottom-0 h-16" />
       {/* poste e sinaleiro */}
       <div className="absolute left-[30%] top-[98px] h-[78px] w-2.5 rounded-full bg-gradient-to-b from-slate-300 to-slate-500 shadow" />
@@ -28,7 +28,7 @@ export function GateSuccess() {
         animate={{ left: '115%' }}
         transition={{ delay: 1.2, duration: 1.8, ease: [0.45, 0, 0.2, 1] }}
       >
-        <CarTop color="#7c6dff" className="h-16 -translate-y-3.5 rotate-90" />
+        <CarTop color="#3f72dc" className="h-16 -translate-y-3.5 rotate-90" />
       </motion.div>
     </div>
   )

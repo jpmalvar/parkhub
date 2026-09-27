@@ -3,9 +3,13 @@ import { ArrowRight, Bike, ChevronsRight, CornerRightUp } from 'lucide-react'
 import clsx from 'clsx'
 import type { MapFloor, MapSpot, VehicleKind } from '../lib/types'
 
-const CAR_COLORS = ['#7c6dff', '#22d3ee', '#f43f5e', '#f59e0b', '#10b981', '#e2e8f0', '#64748b', '#3b82f6']
+// Cores comuns de carro no Brasil: muito branco, prata e preto, um vermelho de vez em quando.
+const CAR_COLORS = ['#e8e8e6', '#a9adb3', '#2b2d31', '#e8e8e6', '#7b8088', '#b3342d', '#a9adb3', '#2c4a7a', '#cfc6b4', '#2b2d31']
 
-export function CarTop({ color = '#7c6dff', className }: { color?: string; className?: string }) {
+// Carro do próprio usuário em amarelo, pra achar rápido no mapa.
+const MINE = '#f2bf2f'
+
+export function CarTop({ color = '#a9adb3', className }: { color?: string; className?: string }) {
   return (
     <svg viewBox="0 0 40 72" className={className} aria-hidden>
       <defs>
@@ -66,7 +70,7 @@ export function GarageMap({ floor, mode = 'view', selectedId, highlightId, allow
       (mode === 'select' && !spot.occupied && !incompatible) || (mode === 'admin' && spot.occupied)
     const selected = selectedId === spot.id
     const highlighted = highlightId === spot.id
-    const color = spot.mine ? '#8b7dff' : spotColor(spot.color_seed)
+    const color = spot.mine ? MINE : spotColor(spot.color_seed)
     const fromLane = row === 'top' ? 70 : -70
 
     return (
@@ -119,7 +123,7 @@ export function GarageMap({ floor, mode = 'view', selectedId, highlightId, allow
                 className={clsx('relative flex h-[78%] items-center justify-center', row === 'bottom' && 'rotate-180')}
               >
                 {spot.kind === 'moto' ? (
-                  <MotoTop color={spot.mine ? '#8b7dff' : spotColor((spot.color_seed ?? 0) + 3)} className="h-[70%]" />
+                  <MotoTop color={spot.mine ? MINE : spotColor((spot.color_seed ?? 0) + 3)} className="h-[70%]" />
                 ) : (
                   <CarTop color={color} className="h-full drop-shadow-[0_6px_10px_rgba(0,0,0,0.35)]" />
                 )}
@@ -133,9 +137,9 @@ export function GarageMap({ floor, mode = 'view', selectedId, highlightId, allow
                 className={clsx('flex h-[78%] items-center justify-center opacity-80', row === 'bottom' && 'rotate-180')}
               >
                 {spot.kind === 'moto' ? (
-                  <MotoTop color="#8b7dff" className="h-[70%] opacity-70" />
+                  <MotoTop color={MINE} className="h-[70%] opacity-70" />
                 ) : (
-                  <CarTop color="#8b7dff" className="h-full opacity-70" />
+                  <CarTop color={MINE} className="h-full opacity-70" />
                 )}
               </motion.div>
             ) : spot.kind === 'moto' ? (
@@ -158,7 +162,7 @@ export function GarageMap({ floor, mode = 'view', selectedId, highlightId, allow
             layoutId={highlighted ? undefined : 'spot-selection'}
             className={clsx(
               'pointer-events-none absolute inset-0.5 rounded-xl border-2',
-              highlighted ? 'animate-pulse border-accent' : 'border-brand shadow-[0_0_24px_-2px_var(--brand)]',
+              highlighted ? 'animate-pulse border-accent' : 'border-brand',
             )}
             transition={{ type: 'spring', stiffness: 420, damping: 34 }}
           />
@@ -169,7 +173,7 @@ export function GarageMap({ floor, mode = 'view', selectedId, highlightId, allow
 
   return (
     <div className="overflow-x-auto pb-1">
-      <div className="relative min-w-[500px] rounded-2xl border border-border bg-surface-2/50 p-2.5 sm:p-4">
+      <div className="relative min-w-[500px] rounded-xl border border-border bg-surface-2/50 p-2.5 sm:p-4">
         {/* fileira superior */}
         <div className="grid grid-cols-8 divide-x-2 divide-border rounded-t-xl border-t-4 border-border/80">
           {top.map((s, i) => renderSpot(s, 'top', i))}
@@ -214,9 +218,9 @@ export function MapLegend({ showMine = true }: { showMine?: boolean }) {
     <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted">
       {item(<span className="size-3 rounded border-2 border-dashed border-border" />, 'Livre')}
       {item(<CarTop color="#64748b" className="h-4" />, 'Ocupada')}
-      {showMine && item(<CarTop color="#8b7dff" className="h-4" />, 'Seu veículo')}
+      {showMine && item(<CarTop color={MINE} className="h-4" />, 'Seu veículo')}
       {item(<span className="h-1 w-3 rounded-full bg-warning/70" />, 'Exclusiva para motos')}
-      {item(<span className="size-3 rounded border-2 border-brand shadow-[0_0_8px_var(--brand)]" />, 'Selecionada')}
+      {item(<span className="size-3 rounded border-2 border-brand" />, 'Selecionada')}
     </div>
   )
 }

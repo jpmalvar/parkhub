@@ -44,7 +44,7 @@ export default function Register() {
     try {
       const { user } = await post<{ user: User }>('/auth/register', form)
       qc.setQueryData(['me'], user)
-      toast.success(`Conta criada! Bem-vindo(a), ${firstName(user.full_name)} 🎉`)
+      toast.success(`Conta criada! Bem-vindo(a), ${firstName(user.full_name)}.`)
       navigate('/app', { replace: true })
     } catch (err) {
       setServerError(errorMessage(err))

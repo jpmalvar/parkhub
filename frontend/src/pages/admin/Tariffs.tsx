@@ -134,7 +134,7 @@ export default function Tariffs() {
               </div>
               <input type="range" min={0.1} max={48} step={0.25} value={simHours} onChange={(e) => setSimHours(Number(e.target.value))} className="w-full accent-[var(--brand)]" />
               {sim && (
-                <div className="flex items-end justify-between rounded-2xl bg-brand-gradient p-5 text-white">
+                <div className="flex items-end justify-between rounded-xl bg-brand p-5 text-white">
                   <div className="text-sm text-white/80">
                     {sim.graceApplied ? 'Dentro da tolerância' : `${sim.hours}h cobradas`}
                     {sim.capApplied && <div className="font-semibold text-white">Teto diário aplicado (economia de {brl(sim.gross - sim.amount)})</div>}

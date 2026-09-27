@@ -5,10 +5,29 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 PROJECT_DIR = BASE_DIR.parent
-DATA_DIR = Path(os.getenv("PARKHUB_DATA_DIR", BASE_DIR / "data"))
+
+# Na Vercel o backend roda como função serverless: só o /tmp aceita escrita.
+ON_VERCEL = bool(os.getenv("VERCEL"))
+DATA_DIR = Path(os.getenv("PARKHUB_DATA_DIR", "/tmp/parkhub" if ON_VERCEL else BASE_DIR / "data"))
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-DATABASE_URL = os.getenv("PARKHUB_DB", f"sqlite:///{(DATA_DIR / 'parkhub.db').as_posix()}")
+
+def _database_url() -> str:
+    # DATABASE_URL é a variável criada pela integração do Neon (Postgres) na Vercel.
+    url = os.getenv("PARKHUB_DB") or os.getenv("DATABASE_URL") or os.getenv("POSTGRES_URL")
+    if not url:
+        return f"sqlite:///{(DATA_DIR / 'parkhub.db').as_posix()}"
+    if url.startswith("postgres://"):
+        url = "postgresql://" + url.removeprefix("postgres://")
+    if url.startswith("postgresql://"):
+        url = "postgresql+psycopg://" + url.removeprefix("postgresql://")
+    return url
+
+
+DATABASE_URL = _database_url()
+IS_SQLITE = DATABASE_URL.startswith("sqlite")
+# Gera os dados de demonstração sozinho quando o banco está vazio (padrão na Vercel).
+AUTO_DEMO = os.getenv("PARKHUB_AUTO_DEMO", "1" if ON_VERCEL else "0") == "1"
 FRONTEND_DIST = Path(os.getenv("PARKHUB_FRONTEND", PROJECT_DIR / "frontend" / "dist"))
 
 TIMEZONE = os.getenv("PARKHUB_TZ", "America/Sao_Paulo")
@@ -33,7 +52,7 @@ SESSION_TTL_HOURS = 12
 SESSION_COOKIE = "ph_session"
 CSRF_COOKIE = "ph_csrf"
 CSRF_HEADER = "x-csrf-token"
-COOKIE_SECURE = os.getenv("PARKHUB_COOKIE_SECURE", "0") == "1"
+COOKIE_SECURE = os.getenv("PARKHUB_COOKIE_SECURE", "1" if ON_VERCEL else "0") == "1"
 
 # Proteção contra força bruta no login
 LOGIN_MAX_FAILURES = 5

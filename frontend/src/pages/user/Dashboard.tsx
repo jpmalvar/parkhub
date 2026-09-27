@@ -35,7 +35,7 @@ export default function UserDashboard() {
         eyebrow={today}
         title={
           <>
-            {greeting()}, {user ? firstName(user.full_name) : ''} 👋
+            {greeting()}, {user ? firstName(user.full_name) : ''}
           </>
         }
         subtitle={active.length ? `Você tem ${active.length} veículo(s) estacionado(s) agora.` : 'Nenhum veículo estacionado no momento.'}
@@ -106,8 +106,8 @@ export default function UserDashboard() {
                 <BarChart data={summary.data.monthly} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
                   <defs>
                     <linearGradient id="barUser" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0" stopColor={CHART.brand2} />
-                      <stop offset="1" stopColor={CHART.brand} stopOpacity={0.6} />
+                      <stop offset="0" stopColor={CHART.brand} />
+                      <stop offset="1" stopColor={CHART.brand} stopOpacity={0.75} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid vertical={false} stroke={CHART.muted} strokeOpacity={0.12} />
@@ -140,7 +140,7 @@ export default function UserDashboard() {
                     </span>
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-surface-3">
-                    <motion.div className="h-full rounded-full bg-brand-gradient" initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 1 }} />
+                    <motion.div className="h-full rounded-full bg-brand" initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 1 }} />
                   </div>
                 </div>
               )

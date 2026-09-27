@@ -17,8 +17,7 @@ export function ActiveTicketCard({ ticket, tariff }: { ticket: Ticket; tariff: T
 
   return (
     <motion.div variants={stagger.item} className="card group relative overflow-hidden">
-      <div className="absolute inset-x-0 top-0 h-1 bg-brand-gradient" />
-      <div className="absolute -right-16 -top-16 size-40 rounded-full bg-brand/10 blur-3xl transition group-hover:bg-brand/20" />
+      <div className="absolute inset-x-0 top-0 h-1 bg-brand" />
       <div className="relative p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-2">
@@ -52,7 +51,7 @@ export function ActiveTicketCard({ ticket, tariff }: { ticket: Ticket; tariff: T
 
         <div className="mt-4">
           <div className="h-1.5 overflow-hidden rounded-full bg-surface-3">
-            <div className="h-full rounded-full bg-brand-gradient transition-[width] duration-1000 ease-linear" style={{ width: `${progress}%` }} />
+            <div className="h-full rounded-full bg-brand transition-[width] duration-1000 ease-linear" style={{ width: `${progress}%` }} />
           </div>
           <div className="mt-1.5 text-[11px] text-muted">
             {graceApplied ? (

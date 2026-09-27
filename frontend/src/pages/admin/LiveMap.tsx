@@ -69,7 +69,7 @@ export default function LiveMap() {
               {selected?.ticket ? (
                 <motion.div key={selected.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
                   <Card className="overflow-hidden">
-                    <div className="relative bg-brand-gradient p-5 text-white">
+                    <div className="relative bg-brand p-5 text-white">
                       <IconButton label="Fechar" onClick={clear} className="absolute right-3 top-3 text-white/80 hover:bg-white/15 hover:text-white">
                         <X className="size-4" />
                       </IconButton>
@@ -128,7 +128,7 @@ export default function LiveMap() {
               ) : (
                 <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                   <Card className="p-6 text-center">
-                    <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-brand/10 text-brand">
+                    <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-brand/10 text-brand">
                       <MousePointerClick className="size-6" />
                     </div>
                     <h3 className="mt-4 font-semibold">Selecione um veículo</h3>

@@ -3,7 +3,7 @@ import io
 import math
 from datetime import date, datetime, time, timedelta
 
-from fastapi import APIRouter, BackgroundTasks, Depends, Query, Request
+from fastapi import APIRouter, Depends, Query, Request
 from fastapi.responses import Response
 from sqlalchemy import case, func, or_, select
 from sqlalchemy.orm import Session, joinedload
@@ -17,7 +17,6 @@ from ..serializers import ticket_dict, user_dict
 from ..services import audit, plates
 from ..services.parking import METHOD_LABELS, occupancy
 from ..services.pdf import report_pdf
-from ..services.realtime import manager
 from ..services.settings_service import get_settings, update_settings
 from ..utils import fmt_duration, fmt_local, iso, local_to_utc, to_local, utcnow
 
@@ -280,7 +279,6 @@ def read_settings(db: Session = Depends(get_db)):
 def write_settings(
     data: SettingsIn,
     request: Request,
-    background: BackgroundTasks,
     db: Session = Depends(get_db),
     admin: User = Depends(require_admin),
 ):
@@ -292,7 +290,6 @@ def write_settings(
     if changes:
         audit.record(db, "tarifas", "; ".join(changes), user=admin, request=request)
     db.commit()
-    background.add_task(manager.broadcast, {"type": "settings", "message": "Tarifas atualizadas"})
     return after
 
 
@@ -334,7 +331,6 @@ def update_user(
     user_id: int,
     data: UserUpdateIn,
     request: Request,
-    background: BackgroundTasks,
     db: Session = Depends(get_db),
     admin: User = Depends(require_admin),
 ):
@@ -354,7 +350,6 @@ def update_user(
     if changes:
         audit.record(db, "usuario", f"@{target.username}: {', '.join(changes)}", user=admin, request=request)
     db.commit()
-    background.add_task(manager.broadcast, {"type": "users"})
     return {"user": user_dict(target)}
 
 

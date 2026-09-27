@@ -30,7 +30,6 @@ export function StatCard({
   }
   return (
     <motion.div variants={stagger.item} className="card group relative overflow-hidden p-5">
-      <div className="absolute -right-8 -top-8 size-24 rounded-full bg-brand/5 blur-2xl transition-all duration-500 group-hover:bg-brand/15" />
       <div className="relative flex items-start justify-between">
         <span className="text-[13px] font-medium text-muted">{label}</span>
         <span className={clsx('flex size-9 items-center justify-center rounded-xl [&>svg]:size-[18px]', tones[tone])}>{icon}</span>

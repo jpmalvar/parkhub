@@ -8,7 +8,7 @@ export default function NotFound() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
       <Logo className="mb-12" />
-      <div className="relative flex h-40 w-72 items-center justify-center rounded-3xl border-2 border-dashed border-border">
+      <div className="relative flex h-40 w-72 items-center justify-center rounded-xl border-2 border-dashed border-border">
         <span className="absolute top-3 font-mono text-xs font-bold text-muted">VAGA 404</span>
         <motion.div initial={{ x: -260 }} animate={{ x: [-260, 0, 0, 16, 0] }} transition={{ duration: 2.2, times: [0, 0.6, 0.75, 0.85, 1] }}>
           <CarTop color="#f43f5e" className="h-24 rotate-90" />

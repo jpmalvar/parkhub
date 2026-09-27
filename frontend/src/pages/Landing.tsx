@@ -1,71 +1,43 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import {
-  ArrowRight,
-  BadgeCheck,
-  Bike,
-  Car,
-  ChartColumn,
-  CircleCheckBig,
-  Clock,
-  CreditCard,
-  Layers,
-  MapPin,
-  MousePointerClick,
-  QrCode,
-  Radio,
-  ShieldCheck,
-  Sparkles,
-  Ticket as TicketIcon,
-  Zap,
-} from 'lucide-react'
+import { motion } from 'framer-motion'
+import { ArrowRight, Bike, Car } from 'lucide-react'
 import clsx from 'clsx'
 import { useMe, useOverview } from '../lib/hooks'
 import { useRealtime } from '../lib/realtime'
 import { brl } from '../lib/format'
-import { Logo, LogoMark } from '../components/Logo'
+import { Logo } from '../components/Logo'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { AnimatedNumber } from '../components/AnimatedNumber'
 import { CarTop, spotColor } from '../components/GarageMap'
-import { Plate } from '../components/Plate'
-import { ButtonLink, LiveDot, Skeleton } from '../components/ui'
+import { ButtonLink, Skeleton } from '../components/ui'
 import { homeFor } from '../components/RequireAuth'
 
-const reveal = {
-  initial: { opacity: 0, y: 28 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: '-80px' },
-  transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
-}
-
-/* ------------------------------------------------------------------ navegação */
 function Navbar() {
   const { data: user } = useMe()
   const [scrolled, setScrolled] = useState(false)
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12)
+    const onScroll = () => setScrolled(window.scrollY > 8)
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   return (
-    <header className={clsx('fixed inset-x-0 top-0 z-40 transition-all duration-300', scrolled ? 'border-b border-border bg-bg/70 backdrop-blur-xl' : 'border-b border-transparent')}>
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-8 px-4 sm:px-6 lg:px-8">
+    <header className={clsx('sticky top-0 z-40 border-b bg-bg transition-colors', scrolled ? 'border-border' : 'border-transparent')}>
+      <div className="mx-auto flex h-16 max-w-6xl items-center gap-8 px-4 sm:px-6">
         <Link to="/">
           <Logo />
         </Link>
-        <nav className="hidden items-center gap-7 text-sm font-medium text-muted md:flex">
-          <a href="#recursos" className="transition hover:text-fg">Recursos</a>
-          <a href="#como-funciona" className="transition hover:text-fg">Como funciona</a>
-          <a href="#ocupacao" className="transition hover:text-fg">Ocupação</a>
-          <a href="#precos" className="transition hover:text-fg">Preços</a>
+        <nav className="hidden items-center gap-6 text-sm font-medium text-muted md:flex">
+          <a href="#como-funciona" className="hover:text-fg">Como funciona</a>
+          <a href="#precos" className="hover:text-fg">Preços</a>
+          <a href="#historia" className="hover:text-fg">De onde veio</a>
         </nav>
         <div className="ml-auto flex items-center gap-2">
           <ThemeToggle />
           {user ? (
-            <ButtonLink to={homeFor(user.role)} size="sm" icon={<ArrowRight className="size-4" />}>
+            <ButtonLink to={homeFor(user.role)} size="sm">
               Ir para o painel
             </ButtonLink>
           ) : (
@@ -84,54 +56,39 @@ function Navbar() {
   )
 }
 
-/* ------------------------------------------------------------------ visual animado do hero */
-function HeroVisual() {
+/* Um andar de mentira que vai mudando sozinho, só pra ilustrar o mapa do app. */
+function FloorPreview() {
   const [occupied, setOccupied] = useState<boolean[]>([true, false, true, true, false, true, false, true, false, true, true, false])
-  const [selected, setSelected] = useState(4)
 
   useEffect(() => {
     const id = window.setInterval(() => {
       setOccupied((prev) => {
         const next = [...prev]
         const i = Math.floor(Math.random() * next.length)
-        if (i !== selected) next[i] = !next[i]
+        next[i] = !next[i]
         return next
       })
-    }, 1700)
+    }, 2200)
     return () => window.clearInterval(id)
-  }, [selected])
-
-  useEffect(() => {
-    const id = window.setInterval(() => {
-      setSelected((s) => {
-        const free = occupied.map((o, i) => (!o && i !== s ? i : -1)).filter((i) => i >= 0)
-        return free.length ? free[Math.floor(Math.random() * free.length)] : s
-      })
-    }, 4200)
-    return () => window.clearInterval(id)
-  }, [occupied])
+  }, [])
 
   const row = (from: number, top: boolean) => (
-    <div className={clsx('grid grid-cols-6 divide-x-2 divide-border', top ? 'border-t-4 border-border/80' : 'border-b-4 border-border/80')}>
+    <div className={clsx('grid grid-cols-6 divide-x divide-dashed divide-muted/40', top ? 'border-t-2 border-muted/30' : 'border-b-2 border-muted/30')}>
       {occupied.slice(from, from + 6).map((busy, k) => {
         const i = from + k
-        const isSel = i === selected && !busy
         return (
-          <div key={i} className={clsx('relative flex aspect-[0.62] items-center justify-center', isSel && 'bg-brand/15')}>
-            <span className={clsx('absolute font-mono text-[9px] font-bold text-muted/60', top ? 'bottom-1' : 'top-1')}>{String(i + 1).padStart(2, '0')}</span>
+          <div key={i} className="relative flex aspect-[0.62] items-center justify-center">
+            <span className={clsx('absolute font-mono text-[9px] font-bold text-muted/70', top ? 'bottom-1' : 'top-1')}>{String(i + 1).padStart(2, '0')}</span>
             {busy && (
               <motion.div
-                key={`car-${i}-${busy}`}
-                initial={{ y: top ? 50 : -50, opacity: 0 }}
+                key={`car-${i}`}
+                initial={{ y: top ? 40 : -40, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ type: 'spring', stiffness: 110, damping: 16 }}
+                transition={{ type: 'spring', stiffness: 120, damping: 18 }}
                 className={clsx('h-[74%]', !top && 'rotate-180')}
               >
                 <CarTop color={spotColor(i * 3)} className="h-full" />
               </motion.div>
-            )}
-            {isSel && (
-              <motion.span layoutId="hero-sel" className="absolute inset-0.5 rounded-lg border-2 border-brand shadow-[0_0_20px_var(--brand)]" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />
             )}
           </div>
         )
@@ -139,426 +96,213 @@ function HeroVisual() {
     </div>
   )
 
+  const free = occupied.filter((o) => !o).length
   return (
-    <div className="relative mx-auto w-full max-w-[520px]">
-      <div className="absolute -inset-10 -z-10 rounded-full bg-brand/25 blur-[90px]" />
-      <motion.div
-        initial={{ opacity: 0, y: 40, rotateX: 18 }}
-        animate={{ opacity: 1, y: 0, rotateX: 0 }}
-        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-        className="card relative overflow-hidden p-4 [transform-style:preserve-3d]"
-      >
-        <div className="mb-3 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm font-semibold">
-            <Layers className="size-4 text-brand" /> Andar 1
-          </div>
-          <span className="flex items-center gap-2 text-xs text-success">
-            <LiveDot /> ao vivo
-          </span>
-        </div>
-        <div className="rounded-xl border border-border bg-surface-2/60 p-2.5">
-          {row(0, true)}
-          <div className="lane animate-lane my-1 h-9 rounded-lg" />
-          {row(6, false)}
-        </div>
-        <div className="mt-3 flex items-center justify-between rounded-xl bg-surface-2/70 px-3 py-2.5 text-xs">
-          <span className="text-muted">Vaga selecionada</span>
-          <span className="font-mono font-bold text-brand">P1-{String(selected + 1).padStart(2, '0')}</span>
-        </div>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, x: 40 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.9, duration: 0.7 }}
-        className="absolute -right-4 -top-6 hidden sm:block"
-      >
-        <div className="glass animate-float flex items-center gap-3 rounded-2xl px-4 py-3 shadow-2xl">
-          <div className="flex size-9 items-center justify-center rounded-xl bg-success/15 text-success">
-            <CircleCheckBig className="size-5" />
-          </div>
-          <div>
-            <div className="text-xs font-semibold">Pagamento aprovado</div>
-            <div className="text-[11px] text-muted">Pix · {brl(2000)} · saída liberada</div>
-          </div>
-        </div>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, x: -40 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1.2, duration: 0.7 }}
-        className="absolute -bottom-8 -left-6 hidden sm:block"
-      >
-        <div className="glass flex items-center gap-3 rounded-2xl px-4 py-3 shadow-2xl [animation-delay:-3s] animate-float">
-          <div className="flex size-9 items-center justify-center rounded-xl bg-brand/15 text-brand">
-            <TicketIcon className="size-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2 text-xs font-semibold">
-              Ticket #1042 <Plate plate="BRA2E19" size="xs" />
-            </div>
-            <div className="text-[11px] text-muted">Entrada às 08:14 · 1h 32min</div>
-          </div>
-        </div>
-      </motion.div>
+    <div className="card p-4">
+      <div className="mb-3 flex items-baseline justify-between text-sm">
+        <span className="font-display font-semibold">1º andar</span>
+        <span className="text-muted">
+          {free} de {occupied.length} livres
+        </span>
+      </div>
+      <div className="rounded-lg bg-surface-2 p-2.5">
+        {row(0, true)}
+        <div className="lane animate-lane my-1 h-8 rounded" />
+        {row(6, false)}
+      </div>
     </div>
   )
 }
 
-/* ------------------------------------------------------------------ hero */
 function Hero() {
   const { data } = useOverview()
-  const { scrollY } = useScroll()
-  const y = useTransform(scrollY, [0, 600], [0, 80])
-  const opacity = useTransform(scrollY, [0, 500], [1, 0.3])
-
   return (
-    <section className="relative overflow-hidden pb-24 pt-32 sm:pt-40">
-      <div className="grid-bg pointer-events-none absolute inset-0 -z-10" />
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <motion.div
-          animate={{ x: [0, 60, -30, 0], y: [0, -40, 30, 0] }}
-          transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute left-[10%] top-10 size-[480px] rounded-full bg-brand/20 blur-[120px]"
-        />
-        <motion.div
-          animate={{ x: [0, -50, 40, 0], y: [0, 50, -20, 0] }}
-          transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute right-[5%] top-40 size-[420px] rounded-full bg-accent/15 blur-[120px]"
-        />
-      </div>
-
-      <motion.div style={{ y, opacity }} className="mx-auto grid max-w-7xl items-center gap-16 px-4 sm:px-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:px-8">
+    <section className="border-b border-border">
+      <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:py-24">
         <div>
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <span className="inline-flex items-center gap-2.5 rounded-full border border-border bg-surface/70 px-3.5 py-1.5 text-xs font-medium backdrop-blur">
-              <LiveDot />
-              {data ? (
-                <span>
-                  <strong className="text-success">{data.free}</strong> vagas livres agora
-                </span>
-              ) : (
-                'Ocupação em tempo real'
-              )}
-              <span className="h-3 w-px bg-border" />
-              <span className="text-muted">3 andares · 45 vagas</span>
-            </span>
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-7 text-[42px] font-extrabold leading-[1.05] tracking-[-0.035em] sm:text-6xl lg:text-[68px]"
-          >
-            Estacione em segundos.
-            <br />
-            <span className="text-gradient">Gerencie em tempo real.</span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.25 }}
-            className="mt-6 max-w-xl text-lg leading-relaxed text-muted"
-          >
-            O ParkHub reúne mapa interativo de vagas, ticket digital com QR Code, pagamento por Pix ou cartão e um painel
-            administrativo completo, tudo sincronizado ao vivo.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-9 flex flex-wrap gap-3"
-          >
-            <ButtonLink to="/cadastro" size="lg" icon={<Sparkles className="size-4" />}>
-              Começar agora, é grátis
+          <p className="text-sm font-medium text-muted">
+            {data ? (
+              <>
+                Agora: <strong className="text-success">{data.free}</strong> vagas livres de {data.total}
+              </>
+            ) : (
+              '3 andares · 45 vagas'
+            )}
+          </p>
+          <h1 className="mt-4 text-[44px] font-bold leading-[1.02] sm:text-6xl">Estacionar sem papelzinho.</h1>
+          <p className="mt-5 max-w-lg text-lg leading-relaxed text-muted">
+            Você escolhe a vaga no mapa, o ticket fica no celular e paga na saída com Pix ou cartão. Quem administra vê o
+            pátio inteiro pela tela, com faturamento e relatórios.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <ButtonLink to="/cadastro" size="lg">
+              Criar conta
             </ButtonLink>
             <ButtonLink to="/entrar" size="lg" variant="secondary">
-              Já tenho conta <ArrowRight className="size-4" />
+              Entrar
             </ButtonLink>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.6 }}
-            className="mt-12 grid max-w-lg grid-cols-3 gap-6 border-t border-border pt-8"
-          >
-            {[
-              { value: data?.free, label: 'vagas livres' },
-              { value: data?.entries_today, label: 'entradas hoje' },
-              { value: data?.prices.grace_minutes, label: 'min de tolerância', suffix: '' },
-            ].map((s) => (
-              <div key={s.label}>
-                <div className="text-3xl font-bold tracking-tight">{s.value === undefined ? <Skeleton className="h-8 w-14" /> : <AnimatedNumber value={s.value} />}</div>
-                <div className="mt-1 text-xs text-muted">{s.label}</div>
-              </div>
-            ))}
-          </motion.div>
+          </div>
+          <p className="mt-4 text-sm text-muted">
+            Só quer testar? A tela de login tem botões pra entrar direto como cliente ou como administrador.
+          </p>
         </div>
-
-        <HeroVisual />
-      </motion.div>
+        <FloorPreview />
+      </div>
     </section>
   )
 }
 
-/* ------------------------------------------------------------------ ocupação ao vivo */
-function LiveOccupancy() {
+function Occupancy() {
   const { data } = useOverview()
   return (
-    <section id="ocupacao" className="scroll-mt-20 py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div {...reveal} className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
-            <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-brand">
-              <Radio className="size-4" /> Direto do pátio
-            </div>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Ocupação em tempo real</h2>
-            <p className="mt-2 max-w-lg text-muted">Os números abaixo se atualizam sozinhos a cada entrada ou saída de veículo.</p>
-          </div>
-        </motion.div>
-        <div className="mt-10 grid gap-5 md:grid-cols-3">
-          {!data &&
-            [1, 2, 3].map((f) => (
-              <div key={f} className="card p-6">
-                <Skeleton className="h-32" />
+    <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+      <h2 className="text-2xl font-bold sm:text-3xl">Como está o pátio agora</h2>
+      <p className="mt-2 text-muted">Atualiza sozinho quando alguém entra ou sai.</p>
+      <div className="mt-8 divide-y divide-border rounded-xl border border-border bg-surface">
+        {!data && [1, 2, 3].map((f) => <Skeleton key={f} className="m-5 h-10" />)}
+        {data?.floors.map((f) => {
+          const pct = f.total ? Math.round((f.occupied / f.total) * 100) : 0
+          return (
+            <div key={f.floor} className="grid items-center gap-3 px-5 py-4 sm:grid-cols-[110px_1fr_auto]">
+              <div className="font-display text-lg font-semibold">{f.floor}º andar</div>
+              <div className="h-2 overflow-hidden rounded-full bg-surface-3">
+                <div className={clsx('h-full rounded-full transition-[width] duration-700', pct > 85 ? 'bg-danger' : 'bg-brand')} style={{ width: `${pct}%` }} />
               </div>
-            ))}
-          {data?.floors.map((f, i) => {
-            const pct = f.total ? Math.round((f.occupied / f.total) * 100) : 0
-            return (
-              <motion.div key={f.floor} {...reveal} transition={{ ...reveal.transition, delay: i * 0.1 }} className="card p-6">
-                {(
-                  <>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-xs font-medium uppercase tracking-wider text-muted">Andar</div>
-                        <div className="text-3xl font-bold">{f.floor}º</div>
-                      </div>
-                      <div className="text-right">
-                        <div className={clsx('text-3xl font-bold num', f.free === 0 ? 'text-danger' : 'text-success')}>
-                          <AnimatedNumber value={f.free} />
-                        </div>
-                        <div className="text-xs text-muted">livres de {f.total}</div>
-                      </div>
-                    </div>
-                    <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-surface-3">
-                      <motion.div
-                        className={clsx('h-full rounded-full', pct > 85 ? 'bg-danger' : 'bg-brand-gradient')}
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${pct}%` }}
-                        viewport={{ once: true }}
-                        animate={{ width: `${pct}%` }}
-                        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                      />
-                    </div>
-                    <div className="mt-4 flex gap-5 text-sm text-muted">
-                      <span className="flex items-center gap-1.5">
-                        <Car className="size-4" /> {f.car_total - f.car_occupied} carros
-                      </span>
-                      <span className="flex items-center gap-1.5">
-                        <Bike className="size-4" /> {f.moto_total - f.moto_occupied} motos
-                      </span>
-                      <span className="ml-auto font-semibold text-fg">{pct}% ocupado</span>
-                    </div>
-                  </>
-                )}
-              </motion.div>
-            )
-          })}
-        </div>
+              <div className="flex gap-4 text-sm text-muted">
+                <span className="flex items-center gap-1.5">
+                  <Car className="size-4" /> {f.car_total - f.car_occupied}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Bike className="size-4" /> {f.moto_total - f.moto_occupied}
+                </span>
+                <span className="w-20 text-right font-semibold text-fg num">
+                  <AnimatedNumber value={f.free} /> livres
+                </span>
+              </div>
+            </div>
+          )
+        })}
       </div>
     </section>
   )
 }
 
-/* ------------------------------------------------------------------ recursos */
-function SpotlightCard({ children, className }: { children: ReactNode; className?: string }) {
-  return (
-    <div
-      onMouseMove={(e) => {
-        const rect = e.currentTarget.getBoundingClientRect()
-        e.currentTarget.style.setProperty('--x', `${e.clientX - rect.left}px`)
-        e.currentTarget.style.setProperty('--y', `${e.clientY - rect.top}px`)
-      }}
-      className={clsx(
-        'group card relative h-full overflow-hidden p-7 transition-transform duration-300 hover:-translate-y-1',
-        'before:pointer-events-none before:absolute before:inset-0 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100',
-        'before:bg-[radial-gradient(420px_circle_at_var(--x)_var(--y),color-mix(in_oklab,var(--brand)_16%,transparent),transparent_60%)]',
-        className,
-      )}
-    >
-      {children}
+function HowItWorks() {
+  const customer = [
+    ['Escolha a vaga', 'Informa a placa, abre o mapa do andar e toca numa vaga livre. Ou deixa o sistema escolher o andar mais vazio.'],
+    ['Guarde o ticket', 'O ticket sai com QR Code e fica no painel, com o tempo e o valor correndo.'],
+    ['Pague e saia', 'Pix (QR ou copia e cola) ou cartão. O comprovante em PDF fica salvo no histórico.'],
+  ]
+  const admin = [
+    ['Mapa ao vivo', 'Todos os carros do pátio. Clicando em um, aparece o dono, o tempo e o valor, e dá pra registrar a saída.'],
+    ['Números do dia', 'Faturamento, horários de pico, ocupação por andar e formas de pagamento.'],
+    ['Controle', 'Tarifas editáveis, gestão de usuários, relatórios em CSV/PDF e log de tudo que acontece.'],
+  ]
+  const list = (title: string, items: string[][]) => (
+    <div>
+      <h3 className="text-lg font-semibold">{title}</h3>
+      <ol className="mt-4 space-y-5">
+        {items.map(([t, text], i) => (
+          <li key={t} className="grid grid-cols-[28px_1fr] gap-3">
+            <span className="font-mono text-sm font-bold text-accent">{String(i + 1).padStart(2, '0')}</span>
+            <div>
+              <div className="font-semibold">{t}</div>
+              <p className="mt-1 text-sm leading-relaxed text-muted">{text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
     </div>
   )
-}
-
-const FEATURES = [
-  { icon: <MousePointerClick />, title: 'Mapa interativo de vagas', text: 'Escolha a vaga exata em uma planta visual de cada andar, com vagas exclusivas para motos sinalizadas.' },
-  { icon: <QrCode />, title: 'Ticket digital com QR Code', text: 'Nada de papel: o ticket fica no celular, com cronômetro e valor atualizados a cada segundo.' },
-  { icon: <CreditCard />, title: 'Pix, cartão ou dinheiro', text: 'Pague pelo app com Pix (QR Code e copia-e-cola) ou cartão, e baixe o comprovante em PDF.' },
-  { icon: <ChartColumn />, title: 'Painel com análises', text: 'Faturamento, horários de pico, ocupação por andar e métodos de pagamento em gráficos claros.' },
-  { icon: <Zap />, title: 'Tudo em tempo real', text: 'Conexão WebSocket: quando um carro entra ou sai, todas as telas são atualizadas na hora.' },
-  { icon: <ShieldCheck />, title: 'Segurança de verdade', text: 'Senhas com bcrypt, proteção CSRF, bloqueio contra força bruta e log de auditoria completo.' },
-]
-
-function Features() {
   return (
-    <section id="recursos" className="scroll-mt-20 py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div {...reveal} className="mx-auto max-w-2xl text-center">
-          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-brand">Recursos</div>
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Tudo o que um estacionamento moderno precisa</h2>
-          <p className="mt-3 text-muted">Da entrada à saída, cada etapa foi pensada para ser rápida para o cliente e transparente para a gestão.</p>
-        </motion.div>
-        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map((f, i) => (
-            <motion.div key={f.title} {...reveal} transition={{ ...reveal.transition, delay: (i % 3) * 0.08 }}>
-              <SpotlightCard>
-                <div className="relative mb-5 flex size-12 items-center justify-center rounded-2xl bg-brand-gradient text-white shadow-[0_10px_30px_-10px_var(--brand)] transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 [&>svg]:size-5">
-                  {f.icon}
-                </div>
-                <h3 className="relative text-lg font-semibold">{f.title}</h3>
-                <p className="relative mt-2 text-sm leading-relaxed text-muted">{f.text}</p>
-              </SpotlightCard>
-            </motion.div>
-          ))}
+    <section id="como-funciona" className="scroll-mt-16 border-y border-border bg-surface">
+      <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+        <h2 className="text-2xl font-bold sm:text-3xl">Como funciona</h2>
+        <div className="mt-10 grid gap-12 md:grid-cols-2">
+          {list('Pra quem estaciona', customer)}
+          {list('Pra quem administra', admin)}
         </div>
       </div>
     </section>
   )
 }
 
-/* ------------------------------------------------------------------ como funciona */
-function HowItWorks() {
-  const steps = [
-    { icon: <MapPin />, title: 'Escolha a vaga', text: 'Informe a placa, veja o mapa do andar e toque na vaga livre que preferir.' },
-    { icon: <TicketIcon />, title: 'Receba o ticket', text: 'Um ticket digital com QR Code é gerado na hora, com cronômetro ao vivo.' },
-    { icon: <BadgeCheck />, title: 'Pague e saia', text: 'Pague pelo app em segundos. A cancela é liberada e o comprovante fica salvo.' },
-  ]
-  return (
-    <section id="como-funciona" className="scroll-mt-20 py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div {...reveal} className="mx-auto max-w-2xl text-center">
-          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-brand">Como funciona</div>
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Três passos. Zero fila.</h2>
-        </motion.div>
-        <div className="relative mt-16 grid gap-10 md:grid-cols-3">
-          <motion.div
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute left-[16%] right-[16%] top-8 hidden h-0.5 origin-left bg-gradient-to-r from-brand via-accent to-brand md:block"
-          />
-          {steps.map((s, i) => (
-            <motion.div key={s.title} {...reveal} transition={{ ...reveal.transition, delay: 0.2 + i * 0.2 }} className="relative text-center">
-              <div className="relative mx-auto flex size-16 items-center justify-center rounded-2xl border border-border bg-surface text-brand shadow-soft [&>svg]:size-6">
-                {s.icon}
-                <span className="absolute -right-2 -top-2 flex size-6 items-center justify-center rounded-full bg-brand-gradient text-xs font-bold text-white">{i + 1}</span>
-              </div>
-              <h3 className="mt-6 text-lg font-semibold">{s.title}</h3>
-              <p className="mx-auto mt-2 max-w-xs text-sm text-muted">{s.text}</p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ------------------------------------------------------------------ preços */
 function Pricing() {
   const { data } = useOverview()
   const prices = data?.prices
-  const plans = [
-    { kind: 'carro', title: 'Carro', icon: <Car />, p: prices?.carro, featured: true },
-    { kind: 'moto', title: 'Moto', icon: <Bike />, p: prices?.moto, featured: false },
+  const rows = [
+    { label: 'Carro', icon: <Car className="size-4" />, p: prices?.carro },
+    { label: 'Moto', icon: <Bike className="size-4" />, p: prices?.moto },
   ]
   return (
-    <section id="precos" className="scroll-mt-20 py-20">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-        <motion.div {...reveal} className="mx-auto max-w-2xl text-center">
-          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-brand">Preços</div>
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Tarifas simples e justas</h2>
-          <p className="mt-3 text-muted">Cobrança por hora iniciada, com tolerância gratuita e teto diário. Sem surpresas.</p>
-        </motion.div>
-        <div className="mt-14 grid gap-6 md:grid-cols-2">
-          {plans.map((plan, i) => (
-            <motion.div
-              key={plan.kind}
-              {...reveal}
-              transition={{ ...reveal.transition, delay: i * 0.12 }}
-              className={clsx('relative overflow-hidden rounded-3xl p-[1.5px]', plan.featured ? 'bg-brand-gradient' : 'bg-border')}
-            >
-              <div className="relative h-full rounded-[calc(1.5rem-1.5px)] bg-surface p-8">
-                {plan.featured && (
-                  <span className="absolute right-6 top-6 rounded-full bg-brand/15 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-brand">Mais usado</span>
-                )}
-                <div className="flex size-12 items-center justify-center rounded-2xl bg-brand/10 text-brand [&>svg]:size-6">{plan.icon}</div>
-                <h3 className="mt-5 text-xl font-semibold">{plan.title}</h3>
-                <div className="mt-4 flex items-end gap-1">
-                  {plan.p ? (
-                    <>
-                      <span className="text-5xl font-extrabold tracking-tight">{brl(plan.p.hourly_cents)}</span>
-                      <span className="mb-1.5 text-muted">/hora</span>
-                    </>
-                  ) : (
-                    <Skeleton className="h-12 w-40" />
-                  )}
-                </div>
-                <ul className="mt-7 space-y-3 text-sm">
-                  {[
-                    `Tolerância grátis de ${prices?.grace_minutes ?? '…'} minutos`,
-                    plan.p?.daily_cap_cents ? `Diária máxima de ${brl(plan.p.daily_cap_cents)}` : 'Sem teto diário',
-                    'Cobrança por hora iniciada',
-                    'Pagamento por Pix, cartão ou dinheiro',
-                    'Comprovante digital em PDF',
-                  ].map((item) => (
-                    <li key={item} className="flex items-center gap-3">
-                      <CircleCheckBig className="size-4 shrink-0 text-success" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                <ButtonLink to="/cadastro" className="mt-8 w-full" variant={plan.featured ? 'primary' : 'secondary'}>
-                  Estacionar agora
-                </ButtonLink>
-              </div>
-            </motion.div>
-          ))}
+    <section id="precos" className="mx-auto max-w-6xl scroll-mt-16 px-4 py-16 sm:px-6">
+      <div className="grid gap-10 md:grid-cols-[1fr_1.2fr]">
+        <div>
+          <h2 className="text-2xl font-bold sm:text-3xl">Preços</h2>
+          <p className="mt-3 leading-relaxed text-muted">
+            Os primeiros {prices?.grace_minutes ?? 15} minutos são de graça. Depois disso a cobrança é por hora iniciada
+            (mínimo de 1 hora) e nunca passa da diária máxima.
+          </p>
         </div>
+        <table className="w-full self-start text-left">
+          <thead className="text-xs uppercase tracking-wide text-muted">
+            <tr className="border-b border-border">
+              <th className="py-3 font-medium">Veículo</th>
+              <th className="py-3 text-right font-medium">Por hora</th>
+              <th className="py-3 text-right font-medium">Diária máx.</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.label} className="border-b border-border">
+                <td className="py-4">
+                  <span className="flex items-center gap-2 font-semibold">
+                    {r.icon} {r.label}
+                  </span>
+                </td>
+                <td className="py-4 text-right font-display text-2xl font-bold num">{r.p ? brl(r.p.hourly_cents) : <Skeleton className="ml-auto h-7 w-20" />}</td>
+                <td className="py-4 text-right text-muted num">{r.p ? (r.p.daily_cap_cents ? brl(r.p.daily_cap_cents) : 'sem teto') : '…'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </section>
   )
 }
 
-/* ------------------------------------------------------------------ CTA + rodapé */
-function CallToAction() {
+const OLD_MAP = ['O', 'L', 'O', 'O', 'L', 'O', 'L', 'O', 'L', 'O', 'O', 'L', 'L', 'O', 'L']
+
+function Origin() {
   return (
-    <section className="py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div {...reveal} className="relative overflow-hidden rounded-[2rem] bg-brand-gradient px-8 py-16 text-center text-white sm:px-16">
-          <div className="absolute -left-20 -top-20 size-72 rounded-full bg-white/15 blur-3xl" />
-          <div className="absolute -bottom-24 -right-10 size-80 rounded-full bg-accent/40 blur-3xl" />
-          <div className="relative">
-            <Clock className="mx-auto size-10 opacity-80" />
-            <h2 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">Seu tempo vale mais do que uma fila.</h2>
-            <p className="mx-auto mt-3 max-w-xl text-white/80">Crie sua conta em menos de um minuto e estacione com o ParkHub hoje mesmo.</p>
-            <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <Link to="/cadastro" className="inline-flex h-12 items-center gap-2 rounded-xl bg-white px-6 font-semibold text-[#2b1f8f] shadow-xl transition hover:scale-[1.03]">
-                Criar minha conta <ArrowRight className="size-4" />
-              </Link>
-              <Link to="/entrar" className="inline-flex h-12 items-center rounded-xl border border-white/40 px-6 font-semibold transition hover:bg-white/10">
-                Entrar
-              </Link>
-            </div>
+    <section id="historia" className="scroll-mt-16 border-t border-border bg-surface">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+        <div className="min-w-0">
+          <h2 className="text-2xl font-bold sm:text-3xl">De onde veio</h2>
+          <div className="mt-4 space-y-4 leading-relaxed text-muted">
+            <p>
+              O ParkHub começou como um programa de terminal em Python, o <code className="font-mono text-sm text-fg">SistemaGaragem.py</code>.
+              Tinha menu numerado, mapa de vagas com <code className="font-mono text-sm text-fg">[L]</code> e{' '}
+              <code className="font-mono text-sm text-fg">[O]</code> e salvava tudo em arquivos .txt, inclusive as senhas.
+            </p>
+            <p>
+              As regras continuam as mesmas: 3 andares com 15 vagas, tickets a partir do 1001, cobrança por hora para carro e
+              moto. O que mudou foi o resto: interface web, senhas com hash, pagamento, relatórios e o mapa atualizando sozinho.
+            </p>
           </div>
-        </motion.div>
+          <Link to="/entrar" className="mt-6 inline-flex items-center gap-1.5 font-semibold text-brand hover:underline">
+            Ver funcionando <ArrowRight className="size-4" />
+          </Link>
+        </div>
+        <pre className="min-w-0 overflow-x-auto rounded-xl bg-[#16171a] p-5 font-mono text-[12.5px] leading-relaxed text-[#d6d4cc]">
+          <span className="text-[#8a8c93]">$ python SistemaGaragem.py</span>
+          {'\n\n--- MAPA DA GARAGEM ---\n[L] = Livre | [O] = Ocupada\n\nAndar 1: '}
+          {OLD_MAP.map((_, j) => ` ${String(j + 1).padStart(2)}   `).join('')}
+          {'\nVagas:   '}
+          {OLD_MAP.map((v) => ` [${v}]  `).join('')}
+          {'\n\n--- MENU DO ADMINISTRADOR ---\n1. Ver Relatório Geral de Veículos\n2. Ver Faturamento Total\n3. Editar Valor por Hora\n4. Visualizar Ocupação da Garagem\n5. Buscar Veículo por Placa\n6. Deslogar\nEscolha uma opção: '}
+          <span className="animate-pulse">_</span>
+        </pre>
       </div>
     </section>
   )
@@ -566,16 +310,12 @@ function CallToAction() {
 
 function Footer() {
   return (
-    <footer className="border-t border-border py-10">
-      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 text-sm text-muted sm:flex-row sm:px-6 lg:px-8">
-        <div className="flex items-center gap-2.5">
-          <LogoMark className="size-6" />
-          <span>© {new Date().getFullYear()} ParkHub · Estacionamento inteligente</span>
-        </div>
-        <div className="flex gap-6">
-          <a href="/api/docs" target="_blank" rel="noreferrer" className="transition hover:text-fg">API</a>
-          <a href="#precos" className="transition hover:text-fg">Preços</a>
-          <Link to="/entrar" className="transition hover:text-fg">Área do cliente</Link>
+    <footer className="border-t border-border">
+      <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <span>ParkHub · {new Date().getFullYear()}</span>
+        <div className="flex gap-5">
+          <a href="/api/docs" target="_blank" rel="noreferrer" className="hover:text-fg">Documentação da API</a>
+          <Link to="/entrar" className="hover:text-fg">Entrar</Link>
         </div>
       </div>
     </footer>
@@ -585,14 +325,13 @@ function Footer() {
 export default function Landing() {
   useRealtime()
   return (
-    <div className="relative overflow-x-hidden">
+    <div className="overflow-x-hidden">
       <Navbar />
       <Hero />
-      <LiveOccupancy />
-      <Features />
+      <Occupancy />
       <HowItWorks />
       <Pricing />
-      <CallToAction />
+      <Origin />
       <Footer />
     </div>
   )

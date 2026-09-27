@@ -97,12 +97,12 @@ export default function AdminDashboard() {
               <AreaChart data={data.revenue_series} margin={{ top: 10, right: 16, left: 4, bottom: 0 }}>
                 <defs>
                   <linearGradient id="rev" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={CHART.brand} stopOpacity={0.45} />
+                    <stop offset="0%" stopColor={CHART.brand} stopOpacity={0.25} />
                     <stop offset="100%" stopColor={CHART.brand} stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="revStroke" x1="0" y1="0" x2="1" y2="0">
                     <stop offset="0%" stopColor={CHART.brand} />
-                    <stop offset="100%" stopColor={CHART.accent} />
+                    <stop offset="100%" stopColor={CHART.brand} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid vertical={false} stroke={CHART.muted} strokeOpacity={0.12} />
@@ -126,7 +126,7 @@ export default function AdminDashboard() {
                 <defs>
                   <linearGradient id="occ" x1="0" y1="0" x2="1" y2="0">
                     <stop offset="0%" stopColor={CHART.brand} />
-                    <stop offset="100%" stopColor={CHART.accent} />
+                    <stop offset="100%" stopColor={CHART.brand} />
                   </linearGradient>
                 </defs>
                 <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
@@ -145,7 +145,7 @@ export default function AdminDashboard() {
               <div key={f.floor} className="flex items-center gap-3 text-sm">
                 <span className="w-16 font-medium">{f.floor}º andar</span>
                 <div className="h-2 flex-1 overflow-hidden rounded-full bg-surface-3">
-                  <motion.div className="h-full rounded-full bg-brand-gradient" initial={{ width: 0 }} animate={{ width: `${(f.occupied / f.total) * 100}%` }} transition={{ duration: 1 }} />
+                  <motion.div className="h-full rounded-full bg-brand" initial={{ width: 0 }} animate={{ width: `${(f.occupied / f.total) * 100}%` }} transition={{ duration: 1 }} />
                 </div>
                 <span className="w-12 text-right text-xs text-muted num">
                   {f.occupied}/{f.total}
@@ -221,7 +221,7 @@ export default function AdminDashboard() {
                   </div>
                   <div className="h-3 overflow-hidden rounded-full bg-surface-3">
                     <motion.div
-                      className={kd.kind === 'moto' ? 'h-full rounded-full bg-warning' : 'h-full rounded-full bg-brand-gradient'}
+                      className={kd.kind === 'moto' ? 'h-full rounded-full bg-warning' : 'h-full rounded-full bg-brand'}
                       initial={{ width: 0 }}
                       animate={{ width: `${pct}%` }}
                       transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}

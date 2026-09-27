@@ -66,12 +66,15 @@ class Spot(Base):
         return f"P{self.floor}-{self.number:02d}"
 
 
+_ACTIVE = text("status = 'active'")
+
+
 class Ticket(Base):
     __tablename__ = "tickets"
     __table_args__ = (
         # Garantias no próprio banco: uma vaga e uma placa só podem ter UM ticket ativo.
-        Index("uq_active_spot", "spot_id", unique=True, sqlite_where=text("status = 'active'")),
-        Index("uq_active_plate", "plate", unique=True, sqlite_where=text("status = 'active'")),
+        Index("uq_active_spot", "spot_id", unique=True, sqlite_where=_ACTIVE, postgresql_where=_ACTIVE),
+        Index("uq_active_plate", "plate", unique=True, sqlite_where=_ACTIVE, postgresql_where=_ACTIVE),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)

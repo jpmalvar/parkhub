@@ -11,8 +11,7 @@ import { Plate } from './Plate'
 export function TicketStub({ ticket, animate = true, className }: { ticket: Ticket; animate?: boolean; className?: string }) {
   const content = (
     <div className={clsx('relative w-full max-w-sm text-left drop-shadow-[0_24px_40px_rgba(0,0,0,0.35)]', className)}>
-      <div className="notch-bottom relative overflow-hidden rounded-t-3xl bg-brand-gradient px-6 pb-6 pt-5 text-white">
-        <div className="absolute -right-10 -top-10 size-40 rounded-full bg-white/10 blur-2xl" />
+      <div className="notch-bottom relative overflow-hidden rounded-t-3xl bg-brand px-6 pb-6 pt-5 text-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <LogoMark className="size-7 ring-2 ring-white/30 rounded-lg" />
@@ -56,7 +55,7 @@ export function TicketStub({ ticket, animate = true, className }: { ticket: Tick
             <div className="font-mono text-lg font-bold">{timeOnly(ticket.entry_at)}</div>
           </div>
         </div>
-        <div className="rounded-2xl bg-white p-2.5 shadow-inner ring-1 ring-black/5">
+        <div className="rounded-xl bg-white p-2.5 shadow-inner ring-1 ring-black/5">
           <QRCodeSVG value={`PARKHUB|${ticket.code}|${ticket.plate}`} size={104} level="M" fgColor="#0c1120" />
         </div>
       </div>

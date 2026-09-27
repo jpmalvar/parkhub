@@ -56,14 +56,14 @@ const adminNav: NavItem[] = [
 
 function RealtimePill() {
   const status = useRealtimeStatus()
-  const label = { online: 'Ao vivo', connecting: 'Conectando', offline: 'Reconectando' }[status]
+  const label = { online: 'Ao vivo', connecting: 'Conectando', offline: 'Sem conexão' }[status]
   return (
     <span
       className={clsx(
         'hidden items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium sm:inline-flex',
         status === 'online' ? 'border-success/30 bg-success/10 text-success' : 'border-warning/30 bg-warning/10 text-warning',
       )}
-      title="Atualizações em tempo real via WebSocket"
+      title="A tela se atualiza sozinha quando algo muda"
     >
       <LiveDot tone={status === 'online' ? 'success' : 'warning'} />
       {label}
@@ -76,14 +76,14 @@ function OccupancyWidget() {
   if (!data) return null
   const pct = data.total ? Math.round((data.occupied / data.total) * 100) : 0
   return (
-    <div className="rounded-2xl border border-border bg-surface-2/60 p-4">
+    <div className="rounded-xl border border-border bg-surface-2/60 p-4">
       <div className="flex items-center justify-between text-xs">
         <span className="font-medium text-muted">Ocupação agora</span>
         <span className="font-bold num">{pct}%</span>
       </div>
       <div className="mt-2.5 h-2 overflow-hidden rounded-full bg-surface-3">
         <motion.div
-          className="h-full rounded-full bg-brand-gradient"
+          className="h-full rounded-full bg-brand"
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
@@ -109,7 +109,7 @@ export function AppShell({ variant }: { variant: 'user' | 'admin' }) {
   const onEvent = useCallback(
     (event: RealtimeEvent) => {
       if (variant === 'admin' && event.type === 'spots' && event.message) {
-        toast(event.message, { icon: event.action === 'entry' ? '🚗' : '✅', duration: 3500 })
+        toast(event.message, { duration: 3500 })
       }
     },
     [variant],
@@ -183,8 +183,8 @@ export function AppShell({ variant }: { variant: 'user' | 'admin' }) {
       <div className="mt-auto space-y-4">
         <OccupancyWidget />
         {user && (
-          <div className="flex items-center gap-3 rounded-2xl border border-border p-3">
-            <div className="flex size-9 items-center justify-center rounded-xl bg-brand-gradient text-xs font-bold text-white">{initials(user.full_name)}</div>
+          <div className="flex items-center gap-3 rounded-xl border border-border p-3">
+            <div className="flex size-9 items-center justify-center rounded-xl bg-brand text-xs font-bold text-white">{initials(user.full_name)}</div>
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm font-semibold">{user.full_name}</div>
               <div className="truncate text-xs text-muted">@{user.username}</div>
@@ -201,16 +201,14 @@ export function AppShell({ variant }: { variant: 'user' | 'admin' }) {
   return (
     <div className="relative min-h-screen">
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-40 left-1/3 size-[520px] rounded-full bg-brand/10 blur-[120px]" />
-        <div className="absolute -bottom-40 right-0 size-[420px] rounded-full bg-accent/5 blur-[120px]" />
       </div>
 
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-border bg-surface/70 backdrop-blur-xl lg:block">{sidebar}</aside>
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-border bg-surface lg:block">{sidebar}</aside>
 
       <AnimatePresence>
         {mobileOpen && (
           <div className="fixed inset-0 z-50 lg:hidden">
-            <motion.div className="absolute inset-0 bg-black/50 backdrop-blur-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setMobileOpen(false)} />
+            <motion.div className="absolute inset-0 bg-black/50" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setMobileOpen(false)} />
             <motion.aside
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
@@ -228,7 +226,7 @@ export function AppShell({ variant }: { variant: 'user' | 'admin' }) {
       </AnimatePresence>
 
       <div className="lg:pl-64">
-        <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-border bg-bg/70 px-4 backdrop-blur-xl sm:px-6">
+        <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-border bg-bg px-4 sm:px-6">
           <IconButton label="Abrir menu" className="lg:hidden" onClick={() => setMobileOpen(true)}>
             <Menu className="size-5" />
           </IconButton>

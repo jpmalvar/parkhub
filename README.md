@@ -5,13 +5,13 @@ Sistema web completo de gestão de estacionamento, evolução do programa de ter
 tarifas por hora para carro e moto, histórico e faturamento) e acrescenta interface moderna, segurança
 de verdade, pagamentos, relatórios e atualização em tempo real.
 
-## 🌐 Acesse online
+## Online
 
-**<https://parkhub-1s5q.onrender.com/>**
+**<URL_VERCEL>**
 
-Use o **acesso rápido de demonstração** na tela de login para entrar direto como Cliente ou Administrador.
-O site está hospedado no plano gratuito do Render: se ficar um tempo sem acessos, o primeiro carregamento
-pode levar até 1 minuto.
+Na tela de login tem acesso rápido pra entrar como Cliente ou como Administrador.
+Está hospedado na Vercel: o frontend é servido como site estático e a API roda como função Python,
+com o banco no Neon (Postgres). Na primeira visita depois de um tempo parado pode demorar uns segundos.
 
 ## Como executar
 
@@ -91,24 +91,29 @@ Cartão de teste para o pagamento simulado: `4111 1111 1111 1111`, validade futu
 
 ```
 parkhub/
-├── backend/                  FastAPI + SQLAlchemy + SQLite
+├── backend/                  FastAPI + SQLAlchemy (SQLite local / Postgres na Vercel)
 │   ├── app/
 │   │   ├── main.py           app, middlewares de segurança, SPA
 │   │   ├── models.py         Usuário, Veículo, Vaga, Ticket, Configuração, Auditoria
 │   │   ├── security.py       bcrypt, JWT, CSRF, rate limit, permissões
-│   │   ├── services/         regras de negócio (tarifas, placas, Pix, cartões, PDF, tempo real)
-│   │   ├── routers/          auth, vagas, tickets, veículos, admin, público + WebSocket
+│   │   ├── services/         regras de negócio (tarifas, placas, Pix, cartões, PDF)
+│   │   ├── routers/          auth, vagas, tickets, veículos, admin, público
 │   │   └── demo.py           gerador de dados de demonstração
-│   └── tests/                43 testes automatizados (pytest)
+│   └── tests/                testes automatizados (pytest)
 ├── frontend/                 React + TypeScript + Vite + Tailwind + Framer Motion + Recharts
 │   └── src/
 │       ├── components/       mapa da garagem, ticket, placa, cartão 3D, UI
 │       ├── pages/            landing, auth, cliente e administração
-│       └── lib/              API, tempo real (WebSocket), formatação, tarifas
+│       └── lib/              API, atualização automática, formatação, tarifas
+├── api/index.py              entrada da função Python na Vercel
+├── vercel.json
 └── iniciar.bat
 ```
 
-- **Tempo real**: cada entrada ou saída é transmitida via WebSocket, e todas as telas abertas se atualizam sozinhas (com reconexão automática).
+- **Atualização automática**: a primeira versão usava WebSocket, mas função serverless não segura conexão aberta.
+  Agora cada tela consulta `/api/public/pulse` a cada 4 segundos (só com a aba visível) e recarrega apenas o que mudou.
+- **Banco**: SQLite quando roda local; na Vercel usa o Postgres do Neon (variável `DATABASE_URL`).
+  Se o banco estiver vazio, os dados de demonstração são criados sozinhos no primeiro acesso.
 - **API REST documentada**: <http://localhost:8000/api/docs> (Swagger).
 
 ## Testes

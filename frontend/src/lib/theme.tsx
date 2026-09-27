@@ -21,7 +21,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     } catch {
       /* armazenamento indisponível */
     }
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#06080f' : '#f5f6fb')
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#121315' : '#f4f3ef')
     setThemeState(next)
     requestAnimationFrame(() => root.classList.remove('[&_*]:!transition-none'))
   }, [])

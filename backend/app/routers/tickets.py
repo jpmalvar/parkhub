@@ -1,6 +1,6 @@
 from datetime import datetime, time, timedelta
 
-from fastapi import APIRouter, BackgroundTasks, Depends, Query, Request
+from fastapi import APIRouter, Depends, Query, Request
 from fastapi.responses import Response
 from sqlalchemy import or_, select
 from sqlalchemy.orm import Session, joinedload
@@ -13,7 +13,6 @@ from ..security import get_current_user, require_customer
 from ..serializers import ticket_dict
 from ..services import parking, pix, plates
 from ..services.pdf import receipt_pdf
-from ..services.realtime import manager
 from ..services.settings_service import get_settings, tariff_for
 from ..utils import local_to_utc, to_local, utcnow
 
@@ -29,15 +28,10 @@ def _tariff_dict(db: Session, kind: str) -> dict:
 def create_ticket(
     data: ParkIn,
     request: Request,
-    background: BackgroundTasks,
     db: Session = Depends(get_db),
     user: User = Depends(require_customer),
 ):
     ticket = parking.park(db, user, data.spot_id, data.plate, data.vehicle_kind, data.save_vehicle, data.nickname, request)
-    background.add_task(
-        manager.broadcast,
-        {"type": "spots", "action": "entry", "spot_id": ticket.spot_id, "message": f"Entrada registrada na vaga {ticket.spot.code}"},
-    )
     return {"ticket": ticket_dict(ticket), "tariff": _tariff_dict(db, ticket.vehicle_kind)}
 
 
@@ -97,7 +91,6 @@ def pay(
     code: str,
     data: PayIn,
     request: Request,
-    background: BackgroundTasks,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
@@ -111,10 +104,6 @@ def pay(
         cash_received_cents=data.cash_received_cents,
         pix_txid=data.pix_txid,
         request=request,
-    )
-    background.add_task(
-        manager.broadcast,
-        {"type": "spots", "action": "exit", "spot_id": ticket.spot_id, "message": f"Vaga {ticket.spot.code} liberada"},
     )
     return {"ticket": ticket_dict(ticket, include_user=user.is_admin), **extra}
 

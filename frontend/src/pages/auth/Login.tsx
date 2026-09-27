@@ -113,7 +113,7 @@ export default function Login() {
         </Button>
       </motion.form>
 
-      <div className="mt-8 rounded-2xl border border-dashed border-border p-4">
+      <div className="mt-8 rounded-xl border border-dashed border-border p-4">
         <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted">Acesso rápido de demonstração</div>
         <div className="grid grid-cols-2 gap-2">
           {DEMO.map((d) => (

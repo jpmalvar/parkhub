@@ -1,5 +1,5 @@
 """Criação da estrutura inicial: tabelas, vagas, tarifas padrão e conta administrativa."""
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from .config import (
@@ -42,3 +42,27 @@ def init_db() -> None:
     Base.metadata.create_all(engine)
     with SessionLocal() as db:
         ensure_base_data(db)
+
+
+def bootstrap(with_demo: bool = False) -> None:
+    """Prepara o banco ao subir o servidor. Com with_demo=True também gera os dados de demonstração."""
+    if engine.dialect.name != "postgresql":
+        _prepare(with_demo)
+        return
+    # Várias instâncias da função podem subir ao mesmo tempo; o lock evita que duas populem o banco juntas.
+    with engine.connect() as conn:
+        conn.execute(text("SELECT pg_advisory_lock(20261001)"))
+        try:
+            _prepare(with_demo)
+        finally:
+            conn.execute(text("SELECT pg_advisory_unlock(20261001)"))
+            conn.commit()
+
+
+def _prepare(with_demo: bool) -> None:
+    if with_demo:
+        from .demo import populate
+
+        populate()
+    else:
+        init_db()

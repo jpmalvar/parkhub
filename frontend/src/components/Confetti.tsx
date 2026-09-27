@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 
-const COLORS = ['#7c6dff', '#22d3ee', '#10b981', '#f59e0b', '#f43f5e', '#a497ff']
+const COLORS = ['#3f72dc', '#f2bf2f', '#2fae70', '#ffffff', '#e05252']
 
 /** Explosão leve de confetes para momentos de sucesso. */
 export function Confetti({ count = 46 }: { count?: number }) {

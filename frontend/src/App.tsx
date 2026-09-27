@@ -27,7 +27,6 @@ const Tariffs = lazy(() => import('./pages/admin/Tariffs'))
 const Audit = lazy(() => import('./pages/admin/Audit'))
 
 const TITLES: [RegExp, string][] = [
-  [/^\/$/, 'Estacionamento inteligente'],
   [/^\/entrar/, 'Entrar'],
   [/^\/cadastro/, 'Criar conta'],
   [/^\/app\/estacionar/, 'Estacionar'],
@@ -57,7 +56,7 @@ function useDocumentTitle() {
   const { pathname } = useLocation()
   useEffect(() => {
     const match = TITLES.find(([re]) => re.test(pathname))
-    document.title = `${match ? match[1] : 'Página não encontrada'} · ParkHub`
+    document.title = pathname === '/' ? 'ParkHub' : `${match ? match[1] : 'Página não encontrada'} · ParkHub`
     window.scrollTo({ top: 0 })
   }, [pathname])
 }

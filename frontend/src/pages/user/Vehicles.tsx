@@ -30,7 +30,7 @@ function AddVehicleModal({ open, onClose }: { open: boolean; onClose: () => void
 
   return (
     <Modal open={open} onClose={onClose} title="Adicionar veículo" description="Salve seus veículos para estacionar com um toque.">
-      <div className="mb-6 flex justify-center rounded-2xl bg-surface-2/60 py-6">
+      <div className="mb-6 flex justify-center rounded-xl bg-surface-2/60 py-6">
         <Plate plate={plate} size="lg" placeholder={!plate} />
       </div>
       <div className="space-y-4">
@@ -109,9 +109,8 @@ export default function Vehicles() {
                 exit={{ opacity: 0, scale: 0.9 }}
                 className="card group relative overflow-hidden p-6"
               >
-                <div className="absolute -right-10 -top-10 size-36 rounded-full bg-brand/10 blur-3xl transition group-hover:bg-brand/20" />
                 <div className="relative flex items-start justify-between">
-                  <div className="flex size-11 items-center justify-center rounded-2xl bg-brand/10 text-brand">{v.kind === 'moto' ? <Bike className="size-5" /> : <Car className="size-5" />}</div>
+                  <div className="flex size-11 items-center justify-center rounded-xl bg-brand/10 text-brand">{v.kind === 'moto' ? <Bike className="size-5" /> : <Car className="size-5" />}</div>
                   <IconButton label="Remover veículo" onClick={() => setRemoving(v)} className="opacity-60 hover:text-danger group-hover:opacity-100">
                     <Trash className="size-4" />
                   </IconButton>

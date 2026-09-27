@@ -3,74 +3,95 @@ import { useQueryClient } from '@tanstack/react-query'
 
 export type RealtimeStatus = 'connecting' | 'online' | 'offline'
 export interface RealtimeEvent {
-  type: 'spots' | 'settings' | 'users' | 'pong'
+  type: 'spots' | 'settings' | 'users'
   action?: 'entry' | 'exit'
-  spot_id?: number
   message?: string
+}
+
+interface Pulse {
+  spots: string
+  users: string
+  settings: string
+  last: { action: 'entry' | 'exit'; spot: string } | null
 }
 
 type Listener = (event: RealtimeEvent) => void
 
-/** Conexão WebSocket única, com reconexão automática e heartbeat. */
+const INTERVAL = 4000
+
+/*
+ * Na Vercel não dá pra manter WebSocket aberto (o backend é serverless), então o
+ * navegador pergunta ao /api/public/pulse a cada poucos segundos se algo mudou.
+ * Só consulta com a aba visível, pra não ficar gastando requisição à toa.
+ */
 class RealtimeClient {
   status: RealtimeStatus = 'connecting'
-  private ws: WebSocket | null = null
   private statusListeners = new Set<() => void>()
   private eventListeners = new Set<Listener>()
-  private retry = 0
-  private heartbeat: number | undefined
-  private reconnectTimer: number | undefined
+  private timer: number | undefined
+  private last: Pulse | null = null
   private users = 0
 
   acquire() {
     this.users += 1
-    if (this.users === 1) this.connect()
+    if (this.users === 1) {
+      document.addEventListener('visibilitychange', this.onVisibility)
+      this.tick()
+    }
   }
 
   release() {
     this.users -= 1
     if (this.users <= 0) {
       this.users = 0
-      window.clearTimeout(this.reconnectTimer)
-      window.clearInterval(this.heartbeat)
-      this.ws?.close()
-      this.ws = null
+      window.clearTimeout(this.timer)
+      document.removeEventListener('visibilitychange', this.onVisibility)
+    }
+  }
+
+  private onVisibility = () => {
+    if (document.visibilityState === 'visible') {
+      window.clearTimeout(this.timer)
+      this.tick()
     }
   }
 
   private setStatus(status: RealtimeStatus) {
+    if (this.status === status) return
     this.status = status
     this.statusListeners.forEach((l) => l())
   }
 
-  private connect() {
-    const proto = location.protocol === 'https:' ? 'wss' : 'ws'
-    const ws = new WebSocket(`${proto}://${location.host}/api/ws`)
-    this.ws = ws
-    this.setStatus('connecting')
-    ws.onopen = () => {
-      this.retry = 0
+  private emit(event: RealtimeEvent) {
+    this.eventListeners.forEach((l) => l(event))
+  }
+
+  private tick = async () => {
+    window.clearTimeout(this.timer)
+    if (document.visibilityState !== 'visible') return
+    try {
+      const res = await fetch('/api/public/pulse', { credentials: 'same-origin' })
+      if (!res.ok) throw new Error(String(res.status))
+      const pulse = (await res.json()) as Pulse
+      const prev = this.last
+      this.last = pulse
       this.setStatus('online')
-      window.clearInterval(this.heartbeat)
-      this.heartbeat = window.setInterval(() => ws.readyState === WebSocket.OPEN && ws.send('ping'), 25000)
-    }
-    ws.onmessage = (msg) => {
-      try {
-        const event = JSON.parse(msg.data) as RealtimeEvent
-        if (event.type !== 'pong') this.eventListeners.forEach((l) => l(event))
-      } catch {
-        /* ignora mensagens inválidas */
+      if (prev) {
+        if (prev.spots !== pulse.spots) {
+          const l = pulse.last
+          this.emit({
+            type: 'spots',
+            action: l?.action,
+            message: l ? (l.action === 'entry' ? `Entrada na vaga ${l.spot}` : `Vaga ${l.spot} liberada`) : undefined,
+          })
+        }
+        if (prev.settings !== pulse.settings) this.emit({ type: 'settings' })
+        if (prev.users !== pulse.users) this.emit({ type: 'users' })
       }
-    }
-    ws.onclose = () => {
-      window.clearInterval(this.heartbeat)
-      if (this.ws !== ws) return
+    } catch {
       this.setStatus('offline')
-      if (this.users > 0) {
-        const delay = Math.min(15000, 1000 * 2 ** this.retry++)
-        this.reconnectTimer = window.setTimeout(() => this.connect(), delay)
-      }
     }
+    if (this.users > 0) this.timer = window.setTimeout(this.tick, INTERVAL)
   }
 
   subscribeStatus = (listener: () => void) => {
@@ -88,7 +109,7 @@ class RealtimeClient {
 
 export const realtime = new RealtimeClient()
 
-/** Mantém a conexão aberta e invalida os dados afetados por cada evento. */
+/** Mantém a consulta rodando e invalida os dados afetados por cada mudança. */
 export function useRealtime(onEvent?: Listener) {
   const qc = useQueryClient()
   const handler = useRef(onEvent)

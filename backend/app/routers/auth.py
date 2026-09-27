@@ -1,6 +1,6 @@
 import math
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request, Response
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -21,14 +21,13 @@ from ..security import (
 )
 from ..serializers import user_dict
 from ..services import audit
-from ..services.realtime import manager
 from ..utils import utcnow
 
 router = APIRouter(prefix="/api/auth", tags=["Autenticação"])
 
 
 @router.post("/register", status_code=201, summary="Criar conta de cliente")
-def register(data: RegisterIn, request: Request, response: Response, background: BackgroundTasks, db: Session = Depends(get_db)):
+def register(data: RegisterIn, request: Request, response: Response, db: Session = Depends(get_db)):
     if db.scalar(select(User.id).where(User.username == data.username)):
         raise HTTPException(409, "Este nome de usuário já está em uso. Escolha outro.")
     user = User(
@@ -43,7 +42,6 @@ def register(data: RegisterIn, request: Request, response: Response, background:
     audit.record(db, "cadastro", f"Nova conta: {user.full_name}", user=user, request=request)
     db.commit()
     start_session(response, user)
-    background.add_task(manager.broadcast, {"type": "users"})
     return {"user": user_dict(user)}
 
 

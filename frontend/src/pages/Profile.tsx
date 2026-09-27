@@ -50,9 +50,9 @@ export default function Profile() {
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
         <div className="space-y-6">
           <Card className="overflow-hidden">
-            <div className="h-24 bg-brand-gradient" />
+            <div className="h-24 bg-brand" />
             <div className="-mt-10 px-6 pb-6">
-              <div className="flex size-20 items-center justify-center rounded-3xl border-4 border-surface bg-brand-gradient text-2xl font-bold text-white shadow-xl">{initials(user.full_name)}</div>
+              <div className="flex size-20 items-center justify-center rounded-xl border-4 border-surface bg-brand text-2xl font-bold text-white shadow-xl">{initials(user.full_name)}</div>
               <div className="mt-4 flex items-center gap-2">
                 <h2 className="text-xl font-bold">{user.full_name}</h2>
                 <Badge tone={user.role === 'admin' ? 'brand' : 'neutral'}>{user.role === 'admin' ? 'Administrador' : 'Cliente'}</Badge>

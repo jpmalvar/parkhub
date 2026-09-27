@@ -9,15 +9,15 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from . import __version__
-from .config import CSRF_COOKIE, CSRF_HEADER, FRONTEND_DIST
+from .config import AUTO_DEMO, CSRF_COOKIE, CSRF_HEADER, FRONTEND_DIST
 from .errors import DomainError
 from .routers import admin, auth, me, public, spots, tickets, vehicles
-from .seed import init_db
+from .seed import bootstrap
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    init_db()
+    bootstrap(with_demo=AUTO_DEMO)
     yield
 
 
@@ -35,7 +35,7 @@ SAFE_METHODS = {"GET", "HEAD", "OPTIONS"}
 CSRF_EXEMPT = {"/api/auth/login", "/api/auth/register"}
 CSP = (
     "default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; "
-    "font-src 'self' data:; script-src 'self'; connect-src 'self' ws: wss:; "
+    "font-src 'self' data:; script-src 'self'; connect-src 'self'; "
     "frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
 )
 

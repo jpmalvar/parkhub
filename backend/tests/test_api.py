@@ -218,3 +218,18 @@ def test_public_overview():
     data = Api().get("/api/public/overview").json()
     assert data["total"] == 45 and data["free"] == 45 and len(data["floors"]) == 3
     assert data["floors"][0]["moto_total"] == 3
+
+
+def test_pulse_changes_on_entry_and_exit(customer):
+    before = customer.get("/api/public/pulse").json()
+    code = park(customer).json()["ticket"]["code"]
+    after_entry = customer.get("/api/public/pulse").json()
+    assert after_entry["spots"] != before["spots"]
+    assert after_entry["last"]["action"] == "entry"
+
+    backdate(code, 30)
+    customer.post(f"/api/tickets/{code}/pay", {"method": "dinheiro", "cash_received_cents": 2000})
+    after_exit = customer.get("/api/public/pulse").json()
+    assert after_exit["spots"] != after_entry["spots"]
+    assert after_exit["last"]["action"] == "exit"
+    assert after_exit["settings"] == before["settings"]

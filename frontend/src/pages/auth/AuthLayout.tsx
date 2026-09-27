@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { CircleCheckBig, ShieldCheck, Zap } from 'lucide-react'
 import { Logo } from '../../components/Logo'
 import { ThemeToggle } from '../../components/ThemeToggle'
 import { TicketStub } from '../../components/TicketStub'
@@ -50,34 +49,15 @@ export function AuthLayout({ title, subtitle, children, footer }: { title: strin
         </div>
       </div>
 
-      <div className="relative hidden overflow-hidden bg-brand-gradient lg:flex lg:flex-col lg:items-center lg:justify-center">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.25),transparent_45%)]" />
-        <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,.25)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.25)_1px,transparent_1px)] [background-size:48px_48px]" />
-        <motion.div
-          animate={{ y: [0, -14, 0], rotate: [-2, 0, -2] }}
-          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-          className="relative w-[340px]"
-        >
+      <div className="relative hidden overflow-hidden bg-[#1b1c1f] lg:flex lg:flex-col lg:items-center lg:justify-center">
+        {/* faixa amarela tracejada, tipo marcação de piso */}
+        <div className="absolute inset-y-0 left-10 w-1.5 bg-[repeating-linear-gradient(to_bottom,#e0b21c_0_36px,transparent_36px_64px)] opacity-70" />
+        <div className="relative w-[340px] -rotate-2">
           <TicketStub ticket={SAMPLE} animate={false} />
-        </motion.div>
-        <div className="relative mt-12 max-w-sm space-y-3 text-white">
-          {[
-            { icon: <Zap className="size-4" />, text: 'Ticket digital gerado em segundos' },
-            { icon: <CircleCheckBig className="size-4" />, text: 'Pague por Pix ou cartão, sem filas' },
-            { icon: <ShieldCheck className="size-4" />, text: 'Dados protegidos com criptografia' },
-          ].map((item, i) => (
-            <motion.div
-              key={item.text}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 + i * 0.15 }}
-              className="flex items-center gap-3 rounded-xl bg-white/10 px-4 py-3 text-sm font-medium backdrop-blur"
-            >
-              {item.icon}
-              {item.text}
-            </motion.div>
-          ))}
         </div>
+        <p className="relative mt-10 max-w-xs text-center text-sm leading-relaxed text-[#a3a4a9]">
+          É assim que o ticket aparece no celular: vaga, placa, hora de entrada e o QR Code pra saída.
+        </p>
       </div>
     </div>
   )

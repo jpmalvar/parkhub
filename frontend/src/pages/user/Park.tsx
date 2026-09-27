@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { AnimatePresence, motion } from 'framer-motion'
 import { toast } from 'sonner'
-import { ArrowLeft, ArrowRight, Bike, Car, Check, CircleCheckBig, LayoutDashboard, MapPin, Plus, Sparkles, Ticket as TicketIcon, Wand2 } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Bike, Car, Check, CircleCheckBig, LayoutDashboard, MapPin, Plus, Info, Ticket as TicketIcon, Wand2 } from 'lucide-react'
 import clsx from 'clsx'
 import { ApiError, api, errorMessage, post } from '../../lib/api'
 import type { MapFloor, MapSpot, Tariff, Ticket, Vehicle, VehicleKind } from '../../lib/types'
@@ -39,7 +39,7 @@ function Stepper({ step }: { step: number }) {
           </div>
           {i < STEPS.length - 1 && (
             <div className="mx-4 h-0.5 flex-1 overflow-hidden rounded-full bg-border">
-              <motion.div className="h-full bg-brand-gradient" initial={false} animate={{ width: i < step ? '100%' : '0%' }} transition={{ duration: 0.5 }} />
+              <motion.div className="h-full bg-brand" initial={false} animate={{ width: i < step ? '100%' : '0%' }} transition={{ duration: 0.5 }} />
             </div>
           )}
         </div>
@@ -127,7 +127,7 @@ export default function Park() {
     }
     setFloor(best.f.floor)
     setSpot(best.free[0])
-    toast.success(`Separamos a vaga ${best.free[0].code} para você — andar mais vazio.`)
+    toast.success(`Separamos a vaga ${best.free[0].code} pra você, no andar mais vazio.`)
   }
 
   const noSpotsForKind = useMemo(
@@ -170,7 +170,7 @@ export default function Park() {
           <CircleCheckBig className="size-8" />
         </motion.div>
         <h1 className="text-2xl font-bold tracking-tight">Veículo estacionado!</h1>
-        <p className="mt-2 text-sm text-muted">Guarde seu ticket — ele também fica salvo no seu painel.</p>
+        <p className="mt-2 text-sm text-muted">Não precisa anotar nada, o ticket fica salvo no seu painel.</p>
         <div className="mt-8">
           <TicketStub ticket={ticket.ticket} />
         </div>
@@ -212,7 +212,7 @@ export default function Park() {
                         setKind(v.kind)
                       }}
                       className={clsx(
-                        'relative flex items-center gap-3 rounded-2xl border p-4 text-left transition disabled:cursor-not-allowed disabled:opacity-50',
+                        'relative flex items-center gap-3 rounded-xl border p-4 text-left transition disabled:cursor-not-allowed disabled:opacity-50',
                         selectedVehicle === v.id ? 'border-brand bg-brand/8 shadow-[0_0_0_4px_color-mix(in_oklab,var(--brand)_12%,transparent)]' : 'border-border hover:border-brand/40',
                       )}
                     >
@@ -238,7 +238,7 @@ export default function Park() {
                       setPlate('')
                     }}
                     className={clsx(
-                      'flex items-center gap-3 rounded-2xl border border-dashed p-4 text-left transition',
+                      'flex items-center gap-3 rounded-xl border border-dashed p-4 text-left transition',
                       selectedVehicle === 'new' ? 'border-brand bg-brand/8' : 'border-border hover:border-brand/40',
                     )}
                   >
@@ -293,7 +293,7 @@ export default function Park() {
                               Salvar este veículo na minha conta
                             </label>
                             {saveVehicle && (
-                              <Input className="mt-3 h-10" placeholder="Apelido (opcional) — ex.: Carro do trabalho" value={nickname} maxLength={30} onChange={(e) => setNickname(e.target.value)} />
+                              <Input className="mt-3 h-10" placeholder="Apelido (opcional), ex.: Carro do trabalho" value={nickname} maxLength={30} onChange={(e) => setNickname(e.target.value)} />
                             )}
                           </div>
                         )}
@@ -353,7 +353,7 @@ export default function Park() {
               )}
             </Card>
             <div className="sticky bottom-4 z-10 mt-5">
-              <div className="glass flex items-center gap-4 rounded-2xl p-3 pl-5 shadow-2xl">
+              <div className="flex items-center gap-4 rounded-xl border border-border bg-surface p-3 pl-5 shadow-lg">
                 <Button variant="ghost" size="sm" icon={<ArrowLeft className="size-4" />} onClick={() => go(0)}>
                   Voltar
                 </Button>
@@ -377,7 +377,7 @@ export default function Park() {
         {step === 2 && spot && (
           <motion.div key="s2" custom={dir} variants={slide} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.3 }} className="mx-auto max-w-2xl">
             <Card className="overflow-hidden">
-              <div className="bg-brand-gradient p-6 text-white">
+              <div className="bg-brand p-6 text-white">
                 <div className="text-xs font-semibold uppercase tracking-wider text-white/70">Resumo</div>
                 <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
                   <Plate plate={plate} size="md" />
@@ -402,7 +402,7 @@ export default function Park() {
               {tariff && overview && (
                 <div className="space-y-2 p-6 text-sm">
                   <div className="flex items-center gap-2 font-semibold">
-                    <Sparkles className="size-4 text-brand" /> Como será a cobrança
+                    <Info className="size-4 text-brand" /> Como será a cobrança
                   </div>
                   <ul className="space-y-1.5 text-muted">
                     <li>
